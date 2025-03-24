@@ -1,0 +1,12 @@
+{
+  "entryPoints": ["packages/**/*.ts"],
+  "out": "docs",
+  "exclude": ["**/*.test.ts", "**/test/**/*"],
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "theme": "default",
+  "name": "Portex SDK Documentation",
+  "readme": "README.md",
+  "hideGenerator": true,
+  "sort": ["source-order"]
+} 
