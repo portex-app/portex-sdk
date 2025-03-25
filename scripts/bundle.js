@@ -1,15 +1,27 @@
 const fs = require('fs');
 const path = require('path');
+const { execSync } = require('child_process');
 
-// 读取编译后的文件
-const sdkPath = path.join(__dirname, '../dest/portex-sdk.js');
-let content = fs.readFileSync(sdkPath, 'utf8');
+// 确保输出目录存在
+const destDir = path.join(__dirname, '../dest');
+if (!fs.existsSync(destDir)) {
+  fs.mkdirSync(destDir, { recursive: true });
+}
 
-// 修复模块路径
-content = content.replace(/define\("packages\//g, 'define("');
+// 编译TypeScript
+console.log('Compiling TypeScript...');
+execSync('tsc', { stdio: 'inherit' });
 
-// 添加模块系统兼容包装
-const wrapper = `
+// 读取telegram-web-app.js的内容
+const telegramWebAppPath = path.join(__dirname, '../lib/telegram-web-app.js');
+const telegramWebAppContent = fs.readFileSync(telegramWebAppPath, 'utf8');
+
+// 读取编译后的SDK文件
+const sdkPath = path.join(destDir, 'portex-sdk.js');
+const sdkContent = fs.readFileSync(sdkPath, 'utf8');
+
+// 合并内容并添加模块系统包装
+const content = `
 (function(root) {
   var modules = {};
   var define = function(name, deps, callback) {
@@ -33,21 +45,25 @@ const wrapper = `
     return modules[name].exports;
   };
 
-  ${content}
+  // Telegram Web App
+  ${telegramWebAppContent}
+
+  // Portex SDK
+  ${sdkContent}
 
   var sdk = require('index');
   
   if (typeof module !== 'undefined' && module.exports) {
-    module.exports = sdk;
+    module.exports = sdk.Portex;
   } else if (typeof define === 'function' && define.amd) {
-    define(function() { return sdk; });
+    define(function() { return sdk.Portex; });
   } else {
-    root.PortexSDK = sdk.PortexSDK;
+    root.Portex = sdk.Portex;
   }
 })(typeof self !== 'undefined' ? self : this);
 `;
 
-// 写入文件
-fs.writeFileSync(sdkPath, wrapper);
+// 写入最终文件
+fs.writeFileSync(sdkPath, content);
 
 console.log('Bundle created successfully!'); 
