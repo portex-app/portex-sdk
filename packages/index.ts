@@ -6,6 +6,7 @@ import {
   PayOptions,
   PayResult
 } from './core/types';
+import WebApp from 'telegram-web-app';
 
 import { SocialModule } from './social/social';
 import { PaymentModule } from './payment/payment';
@@ -13,20 +14,7 @@ import { PaymentModule } from './payment/payment';
 declare global {
   interface Window {
     Telegram?: {
-      WebApp?: {
-        initData: string;
-        initDataUnsafe: {
-          user?: {
-            id: number;
-            first_name: string;
-            last_name?: string;
-            username?: string;
-            language_code?: string;
-          };
-          auth_date: number;
-          hash: string;
-        };
-      };
+      WebApp?: typeof WebApp;
     };
   }
 }
@@ -42,6 +30,7 @@ export class Portex {
   private readonly paymentModule: PaymentModule;
   private readonly baseUrl: string;
   private initResult: InitResult | null = null;
+  private webApp: WebApp;
 
   constructor(private readonly config: SDKConfig) {
     this.baseUrl = config.environment === 'prod' 
@@ -50,6 +39,15 @@ export class Portex {
     
     this.socialModule = new SocialModule(config);
     this.paymentModule = new PaymentModule(config);
+
+    if (!globalWindow) {
+      throw new Error('SDK must run in browser environment');
+    }
+
+    if (!globalWindow.Telegram || !globalWindow.Telegram.WebApp) {
+      throw new Error('Telegram Web App not found, please ensure running in Telegram environment');
+    }
+    this.webApp = globalWindow.Telegram.WebApp;
   }
 
   /**
@@ -57,36 +55,27 @@ export class Portex {
    * @returns 初始化结果
    */
   async init(): Promise<InitResult> {
-    // 获取initData
-    if (!globalWindow) {
-      throw new Error('SDK必须在浏览器环境中运行');
-    }
-
-    const telegramWebApp = globalWindow.Telegram?.WebApp;
-    if (!telegramWebApp) {
-      throw new Error('未找到Telegram Web App，请确保在Telegram环境中运行');
-    }
-
+    const initData = this.webApp.initData;
+    // const user = this.webApp.initDataUnsafe.user;
+   // console.log(this.webApp.initDataUnsafe.user);
     const response = await fetch(`${this.baseUrl}/sdk/v1/tg/user`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        application_id: this.config.appId,
-        telegram_init_data: telegramWebApp.initData
-      })
+        'Content-Type': 'application/json',
+        'X-App-Id': this.config.appId,
+        'X-Tg-InitData': initData
+      }
     });
 
     if (!response.ok) {
-      throw new Error(`初始化失败: ${response.statusText}`);
+      throw new Error(`Initialization failed: ${response.statusText}`);
     }
 
     const data = await response.json();
     
     // 验证返回数据的结构
     if (!this.isValidInitResult(data)) {
-      throw new Error('服务器返回的数据格式不正确');
+      throw new Error('Invalid data format returned from server');
     }
 
     this.initResult = data;
@@ -128,7 +117,7 @@ export class Portex {
    */
   async invite(options: InviteOptions): Promise<InviteResult> {
     if (!this.initResult?.verified) {
-      throw new Error('用户未验证，请先调用init()方法');
+      throw new Error('User not verified, please call init() method first');
     }
     return this.socialModule.invite(options);
   }
@@ -140,7 +129,7 @@ export class Portex {
    */
   async pay(options: PayOptions): Promise<PayResult> {
     if (!this.initResult?.verified) {
-      throw new Error('用户未验证，请先调用init()方法');
+      throw new Error('User not verified, please call init() method first');
     }
     return this.paymentModule.pay(options);
   }
@@ -152,7 +141,7 @@ export class Portex {
    */
   async queryOrder(orderId: string): Promise<PayResult> {
     if (!this.initResult?.verified) {
-      throw new Error('用户未验证，请先调用init()方法');
+      throw new Error('User not verified, please call init() method first');
     }
     return this.paymentModule.queryOrder(orderId);
   }

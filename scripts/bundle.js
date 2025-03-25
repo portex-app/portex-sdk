@@ -66,4 +66,15 @@ const content = `
 // 写入最终文件
 fs.writeFileSync(sdkPath, content);
 
+// 复制测试页面到dest目录
+console.log('Copying test page...');
+const testPagePath = path.join(__dirname, '../test/index.html');
+const testPageContent = fs.readFileSync(testPagePath, 'utf8');
+// 修改SDK引用路径
+const updatedTestPageContent = testPageContent.replace(
+  'src="../dest/portex-sdk.js"',
+  'src="portex-sdk.js"'
+);
+fs.writeFileSync(path.join(destDir, 'index.html'), updatedTestPageContent);
+
 console.log('Bundle created successfully!'); 

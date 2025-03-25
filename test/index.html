@@ -112,22 +112,22 @@
     <script>
         // 创建SDK实例
         const sdk = new Portex({
-            appId: 'test-app-id',
-            environment: 'dev'
+            appId: '2tTzkwj4ryRbDoyoPj8zQ8syN7v',
+            environment: 'prod'
         });
 
-        // 模拟Telegram Web App环境
+        // // 模拟Telegram Web App环境
         window.Telegram = {
             WebApp: {
-                initData: 'test-init-data',
+                initData: 'query_id=AAFaOIMjAwAAAFo4gyPngAFW&user=%7B%22id%22%3A7038253146%2C%22first_name%22%3A%22Jason%22%2C%22last_name%22%3A%22%22%2C%22username%22%3A%22JasonChen82%22%2C%22language_code%22%3A%22zh-hans%22%2C%22allows_write_to_pm%22%3Atrue%2C%22photo_url%22%3A%22https%3A%5C%2F%5C%2Ft.me%5C%2Fi%5C%2Fuserpic%5C%2F320%5C%2FgSHQO0dTQnqeTIA_kDyOtMKU1e2txlGNvE1tVreUe1u1zCBOv3eHrF6xd9ep5Tap.svg%22%7D&auth_date=1742895773&signature=FF9bzsQZKwahHjEf1RKT3ghRvLALYL10y-H5Ip1HXpHtcV-ERVY4jiTatCxI41NpJhngUiPhXtOg86NbnKQTAQ&hash=b22008401a8797d0df62b315a5550d5d849c5ea0158f8b7ac6c9aed24f64ed75',
                 initDataUnsafe: {
                     user: {
-                        id: 12345,
-                        first_name: 'Test',
-                        username: 'test_user'
+                        id: 7038253146,
+                        first_name: 'Jason',
+                        username: 'JasonChen82'
                     },
                     auth_date: Date.now(),
-                    hash: 'test-hash'
+                    hash: 'b22008401a8797d0df62b315a5550d5d849c5ea0158f8b7ac6c9aed24f64ed75'
                 }
             }
         };
