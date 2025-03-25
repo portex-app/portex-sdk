@@ -1,7 +1,7 @@
 {
   "name": "portex-sdk",
   "version": "1.0.0",
-  "description": "Portex Game SDK for Laya and Cocos",
+  "description": "Portex SDK for game development",
   "main": "dest/portex-sdk.js",
   "types": "dest/portex-sdk.d.ts",
   "scripts": {
@@ -11,16 +11,16 @@
     "test": "jest",
     "lint": "eslint packages/**/*.ts",
     "format": "prettier --write \"packages/**/*.ts\"",
-    "docs": "typedoc packages/index.ts"
+    "docs": "typedoc packages/index.ts",
+    "serve": "cd dest && python3 -m http.server 8080"
   },
   "keywords": [
-    "game",
     "sdk",
-    "laya",
-    "cocos"
+    "game",
+    "portex"
   ],
   "author": "",
-  "license": "MIT",
+  "license": "ISC",
   "devDependencies": {
     "@types/jest": "^29.5.12",
     "@types/node": "^20.11.24",
