@@ -10,6 +10,30 @@ import {
 import { SocialModule } from './social/social';
 import { PaymentModule } from './payment/payment';
 
+declare global {
+  interface Window {
+    Telegram?: {
+      WebApp?: {
+        initData: string;
+        initDataUnsafe: {
+          user?: {
+            id: number;
+            first_name: string;
+            last_name?: string;
+            username?: string;
+            language_code?: string;
+          };
+          auth_date: number;
+          hash: string;
+        };
+      };
+    };
+  }
+}
+
+// 获取全局window对象
+const globalWindow = typeof window !== 'undefined' ? window : undefined;
+
 /**
  * Portex SDK 命名空间
  */
@@ -33,6 +57,16 @@ export class Portex {
    * @returns 初始化结果
    */
   async init(): Promise<InitResult> {
+    // 获取initData
+    if (!globalWindow) {
+      throw new Error('SDK必须在浏览器环境中运行');
+    }
+
+    const telegramWebApp = globalWindow.Telegram?.WebApp;
+    if (!telegramWebApp) {
+      throw new Error('未找到Telegram Web App，请确保在Telegram环境中运行');
+    }
+
     const response = await fetch(`${this.baseUrl}/sdk/v1/tg/user`, {
       method: 'POST',
       headers: {
@@ -40,7 +74,7 @@ export class Portex {
       },
       body: JSON.stringify({
         application_id: this.config.appId,
-        telegram_init_data: this.config.initData
+        telegram_init_data: telegramWebApp.initData
       })
     });
 

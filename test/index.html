@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portex SDK 测试页面</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+        }
+        .section h2 {
+            color: #666;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .result {
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .error {
+            color: #dc3545;
+            padding: 10px;
+            background-color: #f8d7da;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        .success {
+            color: #28a745;
+            padding: 10px;
+            background-color: #d4edda;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Portex SDK 测试页面</h1>
+        
+        <div class="section">
+            <h2>初始化</h2>
+            <div class="button-group">
+                <button id="initBtn">初始化SDK</button>
+                <button id="checkVerifiedBtn" disabled>检查验证状态</button>
+            </div>
+            <div id="initResult" class="result"></div>
+        </div>
+
+        <div class="section">
+            <h2>社交功能</h2>
+            <div class="button-group">
+                <button id="inviteBtn" disabled>邀请好友</button>
+            </div>
+            <div id="inviteResult" class="result"></div>
+        </div>
+
+        <div class="section">
+            <h2>支付功能</h2>
+            <div class="button-group">
+                <button id="payBtn" disabled>发起支付</button>
+                <button id="queryOrderBtn" disabled>查询订单</button>
+            </div>
+            <div id="paymentResult" class="result"></div>
+        </div>
+    </div>
+
+    <script src="../dest/portex-sdk.js"></script>
+    <script>
+        // 创建SDK实例
+        const sdk = new Portex({
+            appId: 'test-app-id',
+            environment: 'dev'
+        });
+
+        // 模拟Telegram Web App环境
+        window.Telegram = {
+            WebApp: {
+                initData: 'test-init-data',
+                initDataUnsafe: {
+                    user: {
+                        id: 12345,
+                        first_name: 'Test',
+                        username: 'test_user'
+                    },
+                    auth_date: Date.now(),
+                    hash: 'test-hash'
+                }
+            }
+        };
+
+        // 初始化按钮
+        const initBtn = document.getElementById('initBtn');
+        const checkVerifiedBtn = document.getElementById('checkVerifiedBtn');
+        const inviteBtn = document.getElementById('inviteBtn');
+        const payBtn = document.getElementById('payBtn');
+        const queryOrderBtn = document.getElementById('queryOrderBtn');
+
+        // 结果显示区域
+        const initResult = document.getElementById('initResult');
+        const inviteResult = document.getElementById('inviteResult');
+        const paymentResult = document.getElementById('paymentResult');
+
+        // 显示结果
+        function showResult(element, data, isError = false) {
+            element.innerHTML = `<div class="${isError ? 'error' : 'success'}">${JSON.stringify(data, null, 2)}</div>`;
+        }
+
+        // 初始化SDK
+        initBtn.addEventListener('click', async () => {
+            try {
+                const result = await sdk.init();
+                showResult(initResult, result);
+                checkVerifiedBtn.disabled = false;
+                inviteBtn.disabled = false;
+                payBtn.disabled = false;
+                queryOrderBtn.disabled = false;
+            } catch (error) {
+                showResult(initResult, error.message, true);
+            }
+        });
+
+        // 检查验证状态
+        checkVerifiedBtn.addEventListener('click', () => {
+            const verified = sdk.isVerified();
+            showResult(initResult, { verified });
+        });
+
+        // 邀请好友
+        inviteBtn.addEventListener('click', async () => {
+            try {
+                const result = await sdk.invite({
+                    type: 'friend',
+                    title: '来玩游戏！',
+                    description: '一起来玩吧！'
+                });
+                showResult(inviteResult, result);
+            } catch (error) {
+                showResult(inviteResult, error.message, true);
+            }
+        });
+
+        // 发起支付
+        payBtn.addEventListener('click', async () => {
+            try {
+                const result = await sdk.pay({
+                    amount: 100,
+                    currency: 'CNY',
+                    productId: 'test-product',
+                    productName: '测试商品'
+                });
+                showResult(paymentResult, result);
+            } catch (error) {
+                showResult(paymentResult, error.message, true);
+            }
+        });
+
+        // 查询订单
+        queryOrderBtn.addEventListener('click', async () => {
+            try {
+                const result = await sdk.queryOrder('test-order-id');
+                showResult(paymentResult, result);
+            } catch (error) {
+                showResult(paymentResult, error.message, true);
+            }
+        });
+    </script>
+</body>
+</html> 

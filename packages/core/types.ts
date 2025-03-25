@@ -8,6 +8,8 @@ export interface SDKConfig {
   initData: string;
   /** 环境（development/production） */
   environment: 'dev' | 'prod';
+  /** Telegram Web App 实例 */
+  telegramWebApp?: typeof import('telegram-web-app').default;
 }
 
 /**

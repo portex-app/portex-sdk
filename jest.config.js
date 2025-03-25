@@ -1,6 +1,8 @@
 module.exports = {
-  testEnvironment: 'node',
+  testEnvironment: 'jsdom',
   testMatch: ['**/test/**/*.test.js'],
-  setupFiles: ['<rootDir>/test/setup.js'],
-  testTimeout: 10000
+  verbose: true,
+  clearMocks: true,
+  resetMocks: true,
+  restoreMocks: true
 }; 
