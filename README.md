@@ -2,8 +2,8 @@
 
 Portex SDK 是一个为游戏开发设计的 SDK，支持 Laya 和 Cocos 引擎。它提供了以下主要功能：
 
-- 用户认证（登录、登出、令牌刷新）
-- 社交功能（好友邀请、游戏分享、好友列表）
+- 用户认证（登录）
+- 社交功能（好友邀请）
 - 支付功能（支付、订单查询）
 
 ## 安装
@@ -19,32 +19,110 @@ pnpm add portex-sdk
 ## 快速开始
 
 ```typescript
-import { PortexSDK } from 'portex-sdk';
+import { Portex } from 'portex-sdk';
 
-const sdk = new PortexSDK({
+// 初始化 SDK
+const portex = new Portex({
   appId: 'your-app-id',
   appSecret: 'your-app-secret',
   environment: 'development'
 });
 
-// 使用认证模块
-await sdk.auth.login();
+// 用户登录
+const loginResult = await portex.login({
+  type: 'account',
+  account: 'username',
+  password: 'password'
+});
 
-// 使用社交模块
-await sdk.social.inviteFriend();
+// 邀请好友
+const inviteResult = await portex.invite({
+  type: 'friend',
+  title: '来玩游戏！',
+  description: '和我一起玩吧！'
+});
 
-// 使用支付模块
-await sdk.payment.pay({
+// 支付
+const payResult = await portex.pay({
   amount: 100,
   currency: 'CNY',
-  productId: 'product-id',
-  productName: 'Product Name'
+  productId: 'product-1',
+  productName: '钻石礼包',
+  channel: 'wechat'
 });
+
+// 查询订单
+const orderResult = await portex.queryOrder('order-123');
 ```
 
-## 文档
+## API 文档
 
-详细的 API 文档请参考 [API 文档](./docs/index.html)。
+### portex.login(options?: LoginOptions): Promise<LoginResult>
+
+用户登录接口。
+
+```typescript
+interface LoginOptions {
+  type?: 'guest' | 'account' | 'wechat';
+  account?: string;
+  password?: string;
+}
+
+interface LoginResult {
+  userId: string;
+  nickname: string;
+  token: string;
+  expireAt: number;
+}
+```
+
+### portex.invite(options: InviteOptions): Promise<InviteResult>
+
+好友邀请接口。
+
+```typescript
+interface InviteOptions {
+  type: 'friend' | 'group';
+  title?: string;
+  description?: string;
+  imageUrl?: string;
+}
+
+interface InviteResult {
+  inviteId: string;
+  inviteUrl: string;
+  status: 'pending' | 'accepted' | 'rejected';
+}
+```
+
+### portex.pay(options: PayOptions): Promise<PayResult>
+
+支付接口。
+
+```typescript
+interface PayOptions {
+  amount: number;
+  currency: string;
+  productId: string;
+  productName: string;
+  channel?: 'wechat' | 'alipay' | 'apple' | 'google';
+}
+
+interface PayResult {
+  orderId: string;
+  status: 'success' | 'failed' | 'pending';
+  amount: number;
+  timestamp: number;
+}
+```
+
+### portex.queryOrder(orderId: string): Promise<PayResult>
+
+订单查询接口。
+
+## 详细文档
+
+更多详细信息请参考 [API 文档](./docs/index.html)。
 
 ## 功能模块
 

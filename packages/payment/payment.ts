@@ -1,40 +1,31 @@
-import { SDKConfig, PaymentOptions, PaymentResult } from '../core/types';
+import { SDKConfig, PayOptions, PayResult } from '../core/types';
 
 /**
- * 支付模块，提供支付和订单查询等功能
+ * 支付模块实现
+ * @internal
  */
-export class PortexPayment {
-  private config: SDKConfig;
-
-  /**
-   * 创建支付模块实例
-   * @param config - SDK 配置信息
-   */
-  constructor(config: SDKConfig) {
-    this.config = config;
-  }
+export class PaymentModule {
+  constructor(private readonly config: SDKConfig) {}
 
   /**
    * 发起支付
    * @param options - 支付选项
-   * @returns Promise 对象，包含支付结果
+   * @returns 支付结果
    */
-  async pay(options: PaymentOptions): Promise<PaymentResult> {
+  async pay(options: PayOptions): Promise<PayResult> {
     // 实现支付逻辑
-    console.log('Payment options:', options);
-    console.log('Payment from appId:', this.config.appId);
+    console.log(`[${this.config.environment}] Payment with options:`, options);
     throw new Error('Method not implemented.');
   }
 
   /**
-   * 查询订单状态
+   * 查询订单
    * @param orderId - 订单 ID
-   * @returns Promise 对象，包含订单信息
+   * @returns 支付结果
    */
-  async queryOrder(orderId: string): Promise<PaymentResult> {
+  async queryOrder(orderId: string): Promise<PayResult> {
     // 实现订单查询逻辑
-    console.log('Query order:', orderId);
-    console.log('Query from appId:', this.config.appId);
+    console.log(`[${this.config.environment}] Query order:`, orderId);
     throw new Error('Method not implemented.');
   }
 } 
