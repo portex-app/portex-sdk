@@ -13,7 +13,7 @@ export default class PaymentModule {
    * @returns 支付结果
    */
   async pay(options: PayOptions): Promise<PayResult> {
-    const resp = await this.portex.request<any>('/sdk/v1/tg/pay', {
+    const resp = await this.portex.call<any>('/sdk/v1/tg/pay', {
       method: 'POST',
       data: options
     });
@@ -33,7 +33,7 @@ export default class PaymentModule {
    * @returns 支付结果
    */
   async queryOrder(orderId: string): Promise<PayResult> {
-    const resp = await this.portex.request<any>('/sdk/v1/tg/order', {
+    const resp = await this.portex.call<any>('/sdk/v1/tg/order', {
       method: 'GET',
       data: { orderId }
     });

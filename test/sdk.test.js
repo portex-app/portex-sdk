@@ -59,7 +59,7 @@ describe('Portex SDK', () => {
     });
 
     it('should not be verified before initialization', () => {
-      expect(portex.isVerified()).toBe(false);
+      expect(portex.isVerified).toBe(false);
     });
 
     it('should throw error when calling methods before initialization', async () => {
@@ -131,7 +131,7 @@ describe('Portex SDK', () => {
         })
       });
 
-      const result = await portex.queryInvitePayload('test-invite-key');
+      const result = await portex.getInvitePayload('test-invite-key');
       expect(result).toEqual(mockPayload);
     });
 

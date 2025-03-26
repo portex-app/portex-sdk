@@ -104,10 +104,21 @@ export interface PortexRequestOptions {
  * 请求接口
  */
 export interface IPortex {
-  request<T>(path: string, options?: PortexRequestOptions): Promise<PortexResponse<T>>;
-  
+  /**
+   * 请求api
+   */
+  call<T>(path: string, options?: PortexRequestOptions): Promise<PortexResponse<T>>;
+  /**
+   * 初始化
+   */
+  init(): Promise<VerifyResult>;
+  /**
+   * 检查用户是否已验证
+   */
+  readonly isVerified: boolean;
   /**
    * Telegram Web App
+   * @see https://core.telegram.org/bots/webapps
    */
   webApp: WebApp;
 }
