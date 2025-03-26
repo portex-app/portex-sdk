@@ -288,7 +288,7 @@
                     showResult(inviteResult, 'Please enter payload key to query', true);
                     return;
                 }
-                const result = await sdk.socialModule.queryInvite(key);
+                const result = await sdk.queryInvitePayload(key);
                 showResult(inviteResult, result);
             } catch (error) {
                 showResult(inviteResult, error.message, true);

@@ -4,7 +4,7 @@ import { PayOptions, PayResult, IPortex } from '../core/types';
  * 支付模块实现
  * @internal
  */
-export class PaymentModule {
+export default class PaymentModule {
   constructor(private readonly portex: IPortex) {}
 
   /**

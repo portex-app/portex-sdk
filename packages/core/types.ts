@@ -43,7 +43,7 @@ export interface InviteResult {
  * 邀请负载结果
  */
 export interface InvitePayloadResult {
-  /** 邀请链接 */
+  /** 邀请负载 */
   payload: string;
 }
 /**
