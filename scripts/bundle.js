@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
+const { minify } = require('terser');
 
 // 确保输出目录存在
 const distDir = path.join(__dirname, '../dist');
@@ -63,17 +64,36 @@ const content = `
 })(typeof self !== 'undefined' ? self : this);
 `;
 
-// 写入最终文件
+// 写入未压缩的文件
 fs.writeFileSync(sdkPath, content);
 
-// distDir
+// 压缩代码
+console.log('Minifying code...');
+(async () => {
+  const minified = await minify(content, {
+    compress: {
+      drop_console: true,
+      pure_funcs: ['console.log']
+    },
+    mangle: true,
+    format: {
+      comments: false
+    }
+  });
+
+  // 写入压缩后的文件
+  fs.writeFileSync(path.join(distDir, 'portex-sdk.min.js'), minified.code);
+  console.log('Minified code saved to portex-sdk.min.js');
+})();
+
+// 复制测试页面
 console.log('Copying test page...');
 const testPagePath = path.join(__dirname, '../test/index.html');
 const testPageContent = fs.readFileSync(testPagePath, 'utf8');
 // 修改SDK引用路径
 const updatedTestPageContent = testPageContent.replace(
   'src="../dist/portex-sdk.js"',
-  'src="portex-sdk.js"'
+  'src="portex-sdk.min.js"'
 );
 fs.writeFileSync(path.join(distDir, 'index.html'), updatedTestPageContent);
 
