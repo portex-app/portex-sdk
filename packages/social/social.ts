@@ -1,11 +1,11 @@
-import { SDKConfig, InviteOptions, InviteResult } from '../core/types';
+import { InviteOptions, InviteResult,InvitePayloadResult, IPortex } from '../core/types';
 
 /**
  * 社交模块实现
  * @internal
  */
 export class SocialModule {
-  constructor(private readonly config: SDKConfig) {}
+  constructor(private readonly portex: IPortex) {}
 
   /**
    * 邀请好友或群组
@@ -14,7 +14,52 @@ export class SocialModule {
    */
   async invite(options: InviteOptions): Promise<InviteResult> {
     // 实现邀请逻辑
-    console.log(`[${this.config.environment}] Invite with options:`, options);
-    throw new Error('Method not implemented.');
+    const result = await this.portex.request<InviteResult>('/sdk/v1/tg/invite', {
+      method: 'POST',
+      data: {
+        expire_seconds: options?.expire || 10 * 60,
+        payload: options?.payload
+      }
+    });
+    if (!result.data) {
+      throw new Error('Failed to get invite result');
+    }
+
+    const inviteUrl = result.data.invite_url;
+    if (!inviteUrl) {
+      throw new Error('Failed to get invite url');
+    }
+
+    const url = new URL(inviteUrl);
+    const key = url.searchParams.get('startapp');
+    if (!key) {
+      throw new Error('Failed to get key parameter');
+    }
+
+    const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(
+      inviteUrl
+    )}&text=${encodeURIComponent(options.text || "")}`;
+
+    // 打开分享链接
+    this.portex.webApp?.openTelegramLink(shareUrl);
+    
+    return {...result.data, key};
+  }
+
+  /**
+   * 查询邀请结果
+   * @param key - payload key
+   * @returns 邀请结果
+   */
+  async queryInvite(key: string): Promise<InvitePayloadResult> {
+    const result = await this.portex.request<any>('/sdk/v1/tg/payload', {
+      method: 'GET',
+      data: { key }
+    });
+    if (!result.data) {
+      throw new Error('Failed to get invite result');
+    }
+    
+    return result.data;
   }
 } 

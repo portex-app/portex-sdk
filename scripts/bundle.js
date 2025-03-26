@@ -3,9 +3,9 @@ const path = require('path');
 const { execSync } = require('child_process');
 
 // 确保输出目录存在
-const destDir = path.join(__dirname, '../dest');
-if (!fs.existsSync(destDir)) {
-  fs.mkdirSync(destDir, { recursive: true });
+const distDir = path.join(__dirname, '../dist');
+if (!fs.existsSync(distDir)) {
+  fs.mkdirSync(distDir, { recursive: true });
 }
 
 // 编译TypeScript
@@ -17,7 +17,7 @@ const telegramWebAppPath = path.join(__dirname, '../lib/telegram-web-app.js');
 const telegramWebAppContent = fs.readFileSync(telegramWebAppPath, 'utf8');
 
 // 读取编译后的SDK文件
-const sdkPath = path.join(destDir, 'portex-sdk.js');
+const sdkPath = path.join(distDir, 'portex-sdk.js');
 const sdkContent = fs.readFileSync(sdkPath, 'utf8');
 
 // 合并内容并添加模块系统包装
@@ -66,15 +66,15 @@ const content = `
 // 写入最终文件
 fs.writeFileSync(sdkPath, content);
 
-// 复制测试页面到dest目录
+// distDir
 console.log('Copying test page...');
 const testPagePath = path.join(__dirname, '../test/index.html');
 const testPageContent = fs.readFileSync(testPagePath, 'utf8');
 // 修改SDK引用路径
 const updatedTestPageContent = testPageContent.replace(
-  'src="../dest/portex-sdk.js"',
+  'src="../dist/portex-sdk.js"',
   'src="portex-sdk.js"'
 );
-fs.writeFileSync(path.join(destDir, 'index.html'), updatedTestPageContent);
+fs.writeFileSync(path.join(distDir, 'index.html'), updatedTestPageContent);
 
 console.log('Bundle created successfully!'); 

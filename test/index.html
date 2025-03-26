@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portex SDK 测试页面</title>
+    <title>Portex SDK Test Page</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -74,123 +74,187 @@
             background-color: #d4edda;
             border-radius: 4px;
             margin-top: 10px;
+            word-break: break-all;
+        }
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+        .input-group label {
+            min-width: 80px;
+        }
+        .input-group input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Portex SDK 测试页面</h1>
+        <h1>Portex SDK Test Page</h1>
         
         <div class="section">
-            <h2>初始化</h2>
+            <h2>Initialization</h2>
+            <div class="input-group">
+                <label for="appId">App ID:</label>
+                <input type="text" id="appId" placeholder="Enter App ID" value="2uGXnAGipOPyfMY09aUlHEtlYYg">
+            </div>
             <div class="button-group">
-                <button id="initBtn">初始化SDK</button>
-                <button id="checkVerifiedBtn" disabled>检查验证状态</button>
+                <button id="initBtn">Initialize SDK</button>
+                <button id="checkVerifiedBtn" disabled>Check Verification</button>
             </div>
             <div id="initResult" class="result"></div>
         </div>
 
         <div class="section">
-            <h2>社交功能</h2>
+            <h2>Social Features</h2>
+            <div class="input-group">
+                <label for="inviteText">Invite Text:</label>
+                <input type="text" id="inviteText" placeholder="Enter invite text" value="Hi, share a game with you.">
+            </div>
+            <div class="input-group">
+                <label for="invitePayload">Invite Payload:</label>
+                <input type="text" id="invitePayload" placeholder="Enter invite payload" value="let's play game">
+            </div>
             <div class="button-group">
-                <button id="inviteBtn" disabled>邀请好友</button>
+                <button id="inviteBtn" disabled>Invite Friend</button>
+            </div>
+            <div class="input-group">
+                <label for="payloadKey">Payload Key:</label>
+                <input type="text" id="payloadKey" placeholder="Enter payload key to query">
+            </div>
+            <div class="button-group">
+                <button id="queryInviteBtn" disabled>Query Invite</button>
             </div>
             <div id="inviteResult" class="result"></div>
         </div>
 
         <div class="section">
-            <h2>支付功能</h2>
+            <h2>Payment Features</h2>
             <div class="button-group">
-                <button id="payBtn" disabled>发起支付</button>
-                <button id="queryOrderBtn" disabled>查询订单</button>
+                <button id="payBtn" disabled>Make Payment</button>
+                <button id="queryOrderBtn" disabled>Query Order</button>
             </div>
             <div id="paymentResult" class="result"></div>
         </div>
     </div>
 
-    <script src="../dest/portex-sdk.js"></script>
+    <script src="../dist/portex-sdk.js"></script>
     <script>
-        // 创建SDK实例
-        const sdk = new Portex({
-            appId: '2tTzkwj4ryRbDoyoPj8zQ8syN7v',
-            environment: 'prod'
-        });
+        let sdk = null;
 
-        // // 模拟Telegram Web App环境
-        window.Telegram = {
-            WebApp: {
-                initData: 'query_id=AAFaOIMjAwAAAFo4gyPngAFW&user=%7B%22id%22%3A7038253146%2C%22first_name%22%3A%22Jason%22%2C%22last_name%22%3A%22%22%2C%22username%22%3A%22JasonChen82%22%2C%22language_code%22%3A%22zh-hans%22%2C%22allows_write_to_pm%22%3Atrue%2C%22photo_url%22%3A%22https%3A%5C%2F%5C%2Ft.me%5C%2Fi%5C%2Fuserpic%5C%2F320%5C%2FgSHQO0dTQnqeTIA_kDyOtMKU1e2txlGNvE1tVreUe1u1zCBOv3eHrF6xd9ep5Tap.svg%22%7D&auth_date=1742895773&signature=FF9bzsQZKwahHjEf1RKT3ghRvLALYL10y-H5Ip1HXpHtcV-ERVY4jiTatCxI41NpJhngUiPhXtOg86NbnKQTAQ&hash=b22008401a8797d0df62b315a5550d5d849c5ea0158f8b7ac6c9aed24f64ed75',
-                initDataUnsafe: {
-                    user: {
-                        id: 7038253146,
-                        first_name: 'Jason',
-                        username: 'JasonChen82'
-                    },
-                    auth_date: Date.now(),
-                    hash: 'b22008401a8797d0df62b315a5550d5d849c5ea0158f8b7ac6c9aed24f64ed75'
-                }
-            }
-        };
+        // 模拟Telegram Web App环境
+        // window.Telegram = {
+        //     WebApp: {
+        //         initData: 'query_id=AAFaOIMjAwAAAFo4gyPngAFW&user=%7B%22id%22%3A7038253146%2C%22first_name%22%3A%22Jason%22%2C%22last_name%22%3A%22%22%2C%22username%22%3A%22JasonChen82%22%2C%22language_code%22%3A%22zh-hans%22%2C%22allows_write_to_pm%22%3Atrue%2C%22photo_url%22%3A%22https%3A%5C%2F%5C%2Ft.me%5C%2Fi%5C%2Fuserpic%5C%2F320%5C%2FgSHQO0dTQnqeTIA_kDyOtMKU1e2txlGNvE1tVreUe1u1zCBOv3eHrF6xd9ep5Tap.svg%22%7D&auth_date=1742895773&signature=FF9bzsQZKwahHjEf1RKT3ghRvLALYL10y-H5Ip1HXpHtcV-ERVY4jiTatCxI41NpJhngUiPhXtOg86NbnKQTAQ&hash=b22008401a8797d0df62b315a5550d5d849c5ea0158f8b7ac6c9aed24f64ed75',
+        //         initDataUnsafe: {
+        //             user: {
+        //                 id: 7038253146,
+        //                 first_name: 'Jason',
+        //                 username: 'JasonChen82'
+        //             },
+        //             auth_date: Date.now(),
+        //             hash: 'b22008401a8797d0df62b315a5550d5d849c5ea0158f8b7ac6c9aed24f64ed75'
+        //         }
+        //     }
+        // };
 
-        // 初始化按钮
+        // Initialize buttons
+        const appIdInput = document.getElementById('appId');
         const initBtn = document.getElementById('initBtn');
         const checkVerifiedBtn = document.getElementById('checkVerifiedBtn');
         const inviteBtn = document.getElementById('inviteBtn');
         const payBtn = document.getElementById('payBtn');
         const queryOrderBtn = document.getElementById('queryOrderBtn');
+        const invitePayloadInput = document.getElementById('invitePayload');
+        const payloadKeyInput = document.getElementById('payloadKey');
+        const queryInviteBtn = document.getElementById('queryInviteBtn');
+        const inviteTextInput = document.getElementById('inviteText');
 
-        // 结果显示区域
+        // Result display areas
         const initResult = document.getElementById('initResult');
         const inviteResult = document.getElementById('inviteResult');
         const paymentResult = document.getElementById('paymentResult');
 
-        // 显示结果
+        // Show result
         function showResult(element, data, isError = false) {
             element.innerHTML = `<div class="${isError ? 'error' : 'success'}">${JSON.stringify(data, null, 2)}</div>`;
         }
 
-        // 初始化SDK
+        // Initialize SDK
         initBtn.addEventListener('click', async () => {
             try {
+                const appId = appIdInput.value.trim();
+                if (!appId) {
+                    showResult(initResult, 'Please enter App ID', true);
+                    return;
+                }
+
+                sdk = new Portex({
+                    appId: appId
+                });
+
                 const result = await sdk.init();
                 showResult(initResult, result);
                 checkVerifiedBtn.disabled = false;
                 inviteBtn.disabled = false;
                 payBtn.disabled = false;
                 queryOrderBtn.disabled = false;
+                queryInviteBtn.disabled = false;
             } catch (error) {
                 showResult(initResult, error.message, true);
             }
         });
 
-        // 检查验证状态
+        // Check verification status
         checkVerifiedBtn.addEventListener('click', () => {
+            if (!sdk) {
+                showResult(initResult, 'SDK not initialized', true);
+                return;
+            }
             const verified = sdk.isVerified();
-            showResult(initResult, { verified });
+            showResult(initResult, { verified, initData: sdk.webApp.initDataUnsafe });
         });
 
-        // 邀请好友
+        // Invite friend
         inviteBtn.addEventListener('click', async () => {
+            if (!sdk) {
+                showResult(inviteResult, 'SDK not initialized', true);
+                return;
+            }
             try {
+                const payload = invitePayloadInput.value.trim();
                 const result = await sdk.invite({
-                    type: 'friend',
-                    title: '来玩游戏！',
-                    description: '一起来玩吧！'
+                    expire: 5,
+                    text: inviteTextInput.value.trim(),
+                    payload: payload
                 });
                 showResult(inviteResult, result);
+                if (result.key) {
+                    payloadKeyInput.value = result.key;
+                }
             } catch (error) {
                 showResult(inviteResult, error.message, true);
             }
         });
 
-        // 发起支付
+        // Make payment
         payBtn.addEventListener('click', async () => {
+            if (!sdk) {
+                showResult(paymentResult, 'SDK not initialized', true);
+                return;
+            }
             try {
                 const result = await sdk.pay({
                     amount: 100,
                     currency: 'CNY',
                     productId: 'test-product',
-                    productName: '测试商品'
+                    productName: 'Test Product'
                 });
                 showResult(paymentResult, result);
             } catch (error) {
@@ -198,13 +262,36 @@
             }
         });
 
-        // 查询订单
+        // Query order
         queryOrderBtn.addEventListener('click', async () => {
+            if (!sdk) {
+                showResult(paymentResult, 'SDK not initialized', true);
+                return;
+            }
             try {
                 const result = await sdk.queryOrder('test-order-id');
                 showResult(paymentResult, result);
             } catch (error) {
                 showResult(paymentResult, error.message, true);
+            }
+        });
+
+        // Query invite
+        queryInviteBtn.addEventListener('click', async () => {
+            if (!sdk) {
+                showResult(inviteResult, 'SDK not initialized', true);
+                return;
+            }
+            try {
+                const key = payloadKeyInput.value.trim();
+                if (!key) {
+                    showResult(inviteResult, 'Please enter payload key to query', true);
+                    return;
+                }
+                const result = await sdk.socialModule.queryInvite(key);
+                showResult(inviteResult, result);
+            } catch (error) {
+                showResult(inviteResult, error.message, true);
             }
         });
     </script>
