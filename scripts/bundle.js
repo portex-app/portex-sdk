@@ -92,8 +92,11 @@ const testPagePath = path.join(__dirname, '../test/index.html');
 const testPageContent = fs.readFileSync(testPagePath, 'utf8');
 // 修改SDK引用路径
 const updatedTestPageContent = testPageContent.replace(
-  'src="../dist/portex-sdk.js"',
+  'src="../dist/portex-sdk.min.js"',
   'src="portex-sdk.min.js"'
+).replace(
+  'src="../dist/portex-sdk.js"',
+  'src="portex-sdk.js"'
 );
 fs.writeFileSync(path.join(distDir, 'index.html'), updatedTestPageContent);
 

@@ -13,14 +13,18 @@ export default class PaymentModule {
    * @returns 支付结果
    */
   async pay(options: PayOptions): Promise<PayResult> {
-    const result = await this.portex.request<PayResult>('/sdk/v1/tg/pay', {
+    const resp = await this.portex.request<any>('/sdk/v1/tg/pay', {
       method: 'POST',
       data: options
     });
-    if (!result.data) {
+    if (!resp.ok) {
       throw new Error('Failed to get payment result');
     }
-    return result.data;
+    const result = resp.body?.result;
+    if (!result) {
+      throw new Error('Failed to get payment result');
+    }
+    return result;
   }
 
   /**
@@ -29,13 +33,17 @@ export default class PaymentModule {
    * @returns 支付结果
    */
   async queryOrder(orderId: string): Promise<PayResult> {
-    const result = await this.portex.request<PayResult>('/sdk/v1/tg/order', {
+    const resp = await this.portex.request<any>('/sdk/v1/tg/order', {
       method: 'GET',
       data: { orderId }
     });
-    if (!result.data) {
+    if (!resp.ok) {
       throw new Error('Failed to get order result');
     }
-    return result.data;
+    const result = resp.body?.result;
+    if (!result) {
+      throw new Error('Failed to get order result');
+    }
+    return result;
   }
 } 

@@ -15,7 +15,7 @@ export interface SDKConfig {
  */
 export interface VerifyResult {
   /** 验证状态 */
-  status: 'ok' | 'failed' | 'pending';
+  status: 'ok' | 'failed' | 'error';
   /** 验证时间 */
   timestamp: number;
 }
@@ -77,19 +77,34 @@ export interface PayResult {
 } 
 
 /**
+ * 请求结果
+ */
+export interface PortexResponse<T> {
+  ok: boolean;
+  body: PortexResponseBody<T> | null;
+  status: number;
+  statusText: string;
+  headers: Headers;
+}
+
+export interface PortexResponseBody<T> {
+  ok: boolean;
+  is_dev: boolean;
+  desc: string;
+  result: T | null;
+}
+
+export interface PortexRequestOptions {
+  method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
+  data?: any;
+  headers?: Record<string, string>;
+}
+
+/**
  * 请求接口
  */
 export interface IPortex {
-  request<T>(path: string, options?: {
-    method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
-    data?: any;
-    headers?: Record<string, string>;
-  }): Promise<{
-    data: T | null;
-    status: number;
-    statusText: string;
-    headers: Headers;
-  }>;
+  request<T>(path: string, options?: PortexRequestOptions): Promise<PortexResponse<T>>;
   
   /**
    * Telegram Web App

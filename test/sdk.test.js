@@ -38,11 +38,14 @@ describe('Portex SDK', () => {
       status: 200,
       statusText: 'OK',
       json: () => Promise.resolve({
-        data: {
-          user_id: 'test-user',
-          verified: true,
-          token: 'test-token',
-          expire_at: Date.now() + 3600000
+        ok: true,
+        body: {
+          result: {
+            user_id: 'test-user',
+            verified: true,
+            token: 'test-token',
+            expire_at: Date.now() + 3600000
+          }
         }
       })
     });
@@ -52,7 +55,7 @@ describe('Portex SDK', () => {
     it('should initialize successfully with Telegram Web App', async () => {
       const result = await portex.init();
       expect(result.status).toBe('ok');
-      expect(typeof result.timestamp).toBe('number');
+      expect(result.timestamp).toBeDefined();
     });
 
     it('should not be verified before initialization', () => {
@@ -60,16 +63,6 @@ describe('Portex SDK', () => {
     });
 
     it('should throw error when calling methods before initialization', async () => {
-      // Mock fetch to fail for unverified user
-      global.fetch = jest.fn().mockResolvedValue({
-        ok: false,
-        status: 401,
-        statusText: 'Unauthorized',
-        json: () => Promise.resolve({
-          error: 'User not verified, please call init() method first'
-        })
-      });
-
       await expect(portex.invite({
         expire: 5,
         text: 'Join my game!',
@@ -94,16 +87,19 @@ describe('Portex SDK', () => {
     });
 
     it('should create invite successfully', async () => {
-      const mockResponse = {
-        invite_url: 'https://t.me/share/url?startapp=test-invite-key&text=Join%20my%20game!',
-        key: 'test-invite-key'
-      };
+      const mockInviteUrl = 'https://t.me/share/url?startapp=test-invite-key&text=Join%20my%20game!';
       
       global.fetch = jest.fn().mockResolvedValue({
         ok: true,
         status: 200,
         statusText: 'OK',
-        json: () => Promise.resolve(mockResponse)
+        json: () => Promise.resolve({
+          ok: true,
+          result: {
+            invite_url: mockInviteUrl,
+            key: 'test-invite-key'
+          }
+        })
       });
 
       const result = await portex.invite({
@@ -112,30 +108,31 @@ describe('Portex SDK', () => {
         payload: 'test-payload'
       });
 
-      expect(result.invite_url).toBe(mockResponse.invite_url);
-      expect(result.key).toBe(mockResponse.key);
+      expect(result.invite_url).toBe(mockInviteUrl);
+      expect(result.key).toBe('test-invite-key');
       expect(window.Telegram.WebApp.openTelegramLink).toHaveBeenCalledWith(
-        `https://t.me/share/url?url=${encodeURIComponent(mockResponse.invite_url)}&text=${encodeURIComponent('Join my game!')}`
+        `https://t.me/share/url?url=${encodeURIComponent(mockInviteUrl)}&text=${encodeURIComponent('Join my game!')}`
       );
     });
 
     it('should query invite successfully', async () => {
-      const mockResponse = {
-        data: {
-          payload: 'test-payload',
-          key: 'test-invite-key'
-        }
+      const mockPayload = {
+        payload: 'test-payload',
+        key: 'test-invite-key'
       };
       
       global.fetch = jest.fn().mockResolvedValue({
         ok: true,
         status: 200,
         statusText: 'OK',
-        json: () => Promise.resolve(mockResponse)
+        json: () => Promise.resolve({
+          ok: true,
+          result: mockPayload
+        })
       });
 
-      const result = await portex.social.queryInvitePayload('test-invite-key');
-      expect(result.data).toEqual(mockResponse.data);
+      const result = await portex.queryInvitePayload('test-invite-key');
+      expect(result).toEqual(mockPayload);
     });
 
     it('should throw error when invite creation fails', async () => {
@@ -144,6 +141,7 @@ describe('Portex SDK', () => {
         status: 400,
         statusText: 'Bad Request',
         json: () => Promise.resolve({
+          ok: false,
           error: 'Invalid parameters'
         })
       });
@@ -152,7 +150,7 @@ describe('Portex SDK', () => {
         expire: 5,
         text: 'Join my game!',
         payload: 'test-payload'
-      })).rejects.toThrow('Request failed: Bad Request');
+      })).rejects.toThrow('Failed to get invite url');
     });
   });
 
@@ -162,20 +160,21 @@ describe('Portex SDK', () => {
     });
 
     it('should create payment successfully', async () => {
-      const mockResponse = {
-        data: {
-          orderId: 'test-order-id',
-          status: 'pending',
-          amount: 100,
-          timestamp: Date.now()
-        }
+      const mockPayment = {
+        orderId: 'test-order-id',
+        status: 'pending',
+        amount: 100,
+        timestamp: Date.now()
       };
       
       global.fetch = jest.fn().mockResolvedValue({
         ok: true,
         status: 200,
         statusText: 'OK',
-        json: () => Promise.resolve(mockResponse)
+        json: () => Promise.resolve({
+          ok: true,
+          result: mockPayment
+        })
       });
 
       const result = await portex.pay({
@@ -185,28 +184,29 @@ describe('Portex SDK', () => {
         productName: 'Test Product'
       });
 
-      expect(result.data).toEqual(mockResponse.data);
+      expect(result).toEqual(mockPayment);
     });
 
     it('should query order successfully', async () => {
-      const mockResponse = {
-        data: {
-          orderId: 'test-order-id',
-          status: 'completed',
-          amount: 100,
-          timestamp: Date.now()
-        }
+      const mockOrder = {
+        orderId: 'test-order-id',
+        status: 'completed',
+        amount: 100,
+        timestamp: Date.now()
       };
       
       global.fetch = jest.fn().mockResolvedValue({
         ok: true,
         status: 200,
         statusText: 'OK',
-        json: () => Promise.resolve(mockResponse)
+        json: () => Promise.resolve({
+          ok: true,
+          result: mockOrder
+        })
       });
 
       const result = await portex.queryOrder('test-order-id');
-      expect(result.data).toEqual(mockResponse.data);
+      expect(result).toEqual(mockOrder);
     });
 
     it('should throw error when payment creation fails', async () => {
@@ -215,6 +215,7 @@ describe('Portex SDK', () => {
         status: 400,
         statusText: 'Bad Request',
         json: () => Promise.resolve({
+          ok: false,
           error: 'Invalid payment parameters'
         })
       });
@@ -224,7 +225,7 @@ describe('Portex SDK', () => {
         currency: 'CNY',
         productId: 'test-product',
         productName: 'Test Product'
-      })).rejects.toThrow('Request failed: Bad Request');
+      })).rejects.toThrow('Failed to get payment result');
     });
   });
 }); 

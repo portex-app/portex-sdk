@@ -2,6 +2,9 @@ import {
   SDKConfig,
   InviteOptions,
   InviteResult,
+  PortexRequestOptions,
+  PortexResponse,
+  PortexResponseBody,
   VerifyResult,
   InvitePayloadResult,
   PayOptions,
@@ -71,16 +74,7 @@ export class Portex {
    * @param options.headers Request headers
    * @returns Request result
    */
-  public async request<T>(path: string, options: {
-    method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
-    data?: any;
-    headers?: Record<string, string>;
-  } = {}): Promise<{
-    data: T | null;
-    status: number;
-    statusText: string;
-    headers: Headers;
-  }> {
+  public async request<T>(path: string, options: PortexRequestOptions = {}): Promise<PortexResponse<T>> {
     const {
       method = 'GET',
       data,
@@ -116,11 +110,11 @@ export class Portex {
       ...(method !== 'GET' && data && { body: JSON.stringify(data) })
     });
 
-    if (!response.ok) {
-      throw new Error(`Request failed: ${response.statusText}`);
-    }
+    // if (!response.ok) {
+    //   throw new Error(`Request failed: ${response.statusText}`);
+    // }
 
-    let responseData: T | null = null;
+    let responseData: PortexResponseBody<T> | null = null;
     try {
       responseData = await response.json();
     } catch (e) {
@@ -128,7 +122,8 @@ export class Portex {
     }
 
     return {
-      data: responseData,
+      ok: response.ok,
+      body: responseData,
       status: response.status,
       statusText: response.statusText,
       headers: response.headers
@@ -141,11 +136,11 @@ export class Portex {
    */
   async init(): Promise<VerifyResult> {
     try {
-      const result = await this.request<any>('/sdk/v1/tg/user', {
+      const resp = await this.request<any>('/sdk/v1/tg/user', {
         method: 'POST'
       });
 
-      if (result.status === 201 || result.status === 200) {
+      if (resp.ok) {
         this.initResult = {
           status: 'ok',
           timestamp: Date.now()
@@ -159,9 +154,8 @@ export class Portex {
         return this.initResult;
       }
     } catch (error) {
-      console.log('Init error:', error);
       this.initResult = {
-        status: 'failed',
+        status: 'error',
         timestamp: Date.now()
       };
       throw this.initResult;
