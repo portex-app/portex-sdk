@@ -34,6 +34,9 @@ pnpm install
 
 # 构建
 pnpm build
+
+# 测试
+pnpm test
 ```
 
 ## API 文档
@@ -69,7 +72,16 @@ interface InviteResult {
   key: string;         // 邀请 ID
 }
 ```
+### portex.queryInvitePayload(key: string): Promise<InvitePayloadResult>
 
+获取邀请信息
+
+```typescript
+interface InvitePayloadResult {
+  payload: string;  // 邀请payload
+}
+
+```
 
 ## 许可证
 

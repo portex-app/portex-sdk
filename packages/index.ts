@@ -3,13 +3,14 @@ import {
   InviteOptions,
   InviteResult,
   VerifyResult,
+  InvitePayloadResult,
   PayOptions,
   PayResult
 } from './core/types';
 import WebApp from 'telegram-web-app';
 
-import { SocialModule } from './social/social';
-import { PaymentModule } from './payment/payment';
+import Social from './social/social';
+import Payment from './payment/payment';
 
 declare global {
   interface Window {
@@ -26,8 +27,8 @@ const globalWindow = typeof window !== 'undefined' ? window : undefined;
  * Portex SDK 命名空间
  */
 export class Portex {
-  private readonly socialModule: SocialModule;
-  private readonly paymentModule: PaymentModule;
+  private readonly social: Social;
+  private readonly payment: Payment;
 
   /**
    * endpoint url
@@ -57,8 +58,8 @@ export class Portex {
     this.webApp = globalWindow.Telegram.WebApp;
 
     // 初始化模块
-    this.socialModule = new SocialModule(this);
-    this.paymentModule = new PaymentModule(this);
+    this.social = new Social(this);
+    this.payment = new Payment(this);
   }
 
   /**
@@ -184,7 +185,14 @@ export class Portex {
     if (this.initResult?.status !== 'ok') {
       throw new Error('User not verified, please call init() method first');
     }
-    return this.socialModule.invite(options);
+    return this.social.invite(options);
+  }
+
+  async queryInvitePayload(key: string): Promise<InvitePayloadResult> {
+    if (this.initResult?.status !== 'ok') {
+      throw new Error('User not verified, please call init() method first');
+    }
+    return this.social.queryInvitePayload(key);
   }
 
   /**
@@ -196,7 +204,7 @@ export class Portex {
     if (this.initResult?.status !== 'ok') {
       throw new Error('User not verified, please call init() method first');
     }
-    return this.paymentModule.pay(options);
+    return this.payment.pay(options);
   }
 
   /**
@@ -208,7 +216,7 @@ export class Portex {
     if (this.initResult?.status !== 'ok') {
       throw new Error('User not verified, please call init() method first');
     }
-    return this.paymentModule.queryOrder(orderId);
+    return this.payment.queryOrder(orderId);
   }
 }
 

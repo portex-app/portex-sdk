@@ -134,7 +134,7 @@ describe('Portex SDK', () => {
         json: () => Promise.resolve(mockResponse)
       });
 
-      const result = await portex.socialModule.queryInvite('test-invite-key');
+      const result = await portex.social.queryInvitePayload('test-invite-key');
       expect(result.data).toEqual(mockResponse.data);
     });
 

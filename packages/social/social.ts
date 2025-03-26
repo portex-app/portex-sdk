@@ -4,7 +4,7 @@ import { InviteOptions, InviteResult,InvitePayloadResult, IPortex } from '../cor
  * 社交模块实现
  * @internal
  */
-export class SocialModule {
+export default class SocialModule {
   constructor(private readonly portex: IPortex) {}
 
   /**
@@ -51,7 +51,7 @@ export class SocialModule {
    * @param key - payload key
    * @returns 邀请结果
    */
-  async queryInvite(key: string): Promise<InvitePayloadResult> {
+  async queryInvitePayload(key: string): Promise<InvitePayloadResult> {
     const result = await this.portex.request<any>('/sdk/v1/tg/payload', {
       method: 'GET',
       data: { key }
