@@ -14,18 +14,18 @@ export default class SocialModule {
    */
   async invite(options: InviteOptions): Promise<InviteResult> {
     // 实现邀请逻辑
-    const result = await this.portex.request<InviteResult>('/sdk/v1/tg/invite', {
+    const resp = await this.portex.request<InviteResult>('/sdk/v1/tg/invite', {
       method: 'POST',
       data: {
         expire_seconds: options?.expire || 10 * 60,
         payload: options?.payload
       }
     });
-    if (!result.data) {
+    if (!resp.body) {
       throw new Error('Failed to get invite result');
     }
-
-    const inviteUrl = result.data.invite_url;
+    const result = resp.body.result;
+    const inviteUrl = result?.invite_url;
     if (!inviteUrl) {
       throw new Error('Failed to get invite url');
     }
@@ -43,7 +43,14 @@ export default class SocialModule {
     // 打开分享链接
     this.portex.webApp?.openTelegramLink(shareUrl);
     
-    return {...result.data, key};
+    if (!result?.invite_url) {
+      throw new Error('Failed to get invite url');
+    }
+    
+    return {
+      ...result,
+      key
+    };
   }
 
   /**
@@ -52,14 +59,19 @@ export default class SocialModule {
    * @returns 邀请结果
    */
   async queryInvitePayload(key: string): Promise<InvitePayloadResult> {
-    const result = await this.portex.request<any>('/sdk/v1/tg/payload', {
+    const resp = await this.portex.request<InvitePayloadResult>('/sdk/v1/tg/payload', {
       method: 'GET',
       data: { key }
     });
-    if (!result.data) {
+    if (!resp.ok) {
       throw new Error('Failed to get invite result');
     }
+    const result = resp.body?.result;
     
-    return result.data;
+    if (!result) {
+      throw new Error('Failed to get invite result');
+    }
+
+    return result;
   }
 } 

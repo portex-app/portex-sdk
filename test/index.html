@@ -200,12 +200,17 @@
                 });
 
                 const result = await sdk.init();
-                showResult(initResult, result);
-                checkVerifiedBtn.disabled = false;
-                inviteBtn.disabled = false;
-                payBtn.disabled = false;
-                queryOrderBtn.disabled = false;
-                queryInviteBtn.disabled = false;
+                
+                if (result.status === 'ok') {
+                    showResult(initResult, result);
+                    checkVerifiedBtn.disabled = false;
+                    inviteBtn.disabled = false;
+                    payBtn.disabled = false;
+                    queryOrderBtn.disabled = false;
+                    queryInviteBtn.disabled = false;
+                }else{
+                    showResult(initResult, result, true);
+                }
             } catch (error) {
                 showResult(initResult, error.message, true);
             }
@@ -217,8 +222,8 @@
                 showResult(initResult, 'SDK not initialized', true);
                 return;
             }
-            const verified = sdk.isVerified();
-            showResult(initResult, { verified, initData: sdk.webApp.initDataUnsafe });
+            const status = sdk.isVerified();
+            showResult(initResult, { status, initData: sdk.webApp.initDataUnsafe });
         });
 
         // Invite friend
