@@ -1,83 +1,51 @@
+import WebApp from 'telegram-web-app';
+
 /**
  * SDK 配置接口
  */
 export interface SDKConfig {
   /** 应用 ID */
   appId: string;
-  /** Telegram 初始化数据 */
-  initData: string;
   /** 环境（development/production） */
   environment: 'dev' | 'prod';
-  /** Telegram Web App 实例 */
-  telegramWebApp?: typeof import('telegram-web-app').default;
 }
 
 /**
- * SDK 初始化结果
+ * 验证结果
  */
-export interface InitResult {
-  /** 用户 ID */
-  userId: string;
-  /** 是否验证通过 */
-  verified: boolean;
-  /** 访问令牌 */
-  token: string;
-  /** 令牌过期时间 */
-  expireAt: number;
+export interface VerifyResult {
+  /** 验证状态 */
+  status: 'ok' | 'failed' | 'pending';
+  /** 验证时间 */
+  timestamp: number;
 }
 
-/**
- * 登录选项
- */
-export interface LoginOptions {
-  /** 登录类型 */
-  type?: 'guest' | 'account' | 'wechat';
-  /** 账号（当 type 为 account 时必填） */
-  account?: string;
-  /** 密码（当 type 为 account 时必填） */
-  password?: string;
-}
-
-/**
- * 登录结果
- */
-export interface LoginResult {
-  /** 用户 ID */
-  userId: string;
-  /** 用户昵称 */
-  nickname: string;
-  /** 访问令牌 */
-  token: string;
-  /** 令牌过期时间 */
-  expireAt: number;
-}
-
-/**
- * 邀请选项
- */
 export interface InviteOptions {
-  /** 邀请类型 */
-  type: 'friend' | 'group';
-  /** 邀请标题 */
-  title?: string;
-  /** 邀请描述 */
-  description?: string;
-  /** 邀请图片 URL */
-  imageUrl?: string;
+  /** 过期时间 */
+  expire: number;
+  /** 分享文本 */
+  text?: string;
+  /** 负载 */
+  payload?: string;
 }
 
 /**
  * 邀请结果
  */
 export interface InviteResult {
-  /** 邀请 ID */
-  inviteId: string;
   /** 邀请链接 */
-  inviteUrl: string;
-  /** 邀请状态 */
-  status: 'pending' | 'accepted' | 'rejected';
+  invite_url: string;
+  /** 邀请 ID */
+  key: string;
 }
 
+/**
+ * 邀请负载结果
+ */
+export interface InvitePayloadResult {
+  /** 邀请链接 */
+  payload: string;
+}
 /**
  * 支付选项
  */
@@ -107,3 +75,24 @@ export interface PayResult {
   /** 支付时间 */
   timestamp: number;
 } 
+
+/**
+ * 请求接口
+ */
+export interface IPortex {
+  request<T>(path: string, options?: {
+    method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
+    data?: any;
+    headers?: Record<string, string>;
+  }): Promise<{
+    data: T | null;
+    status: number;
+    statusText: string;
+    headers: Headers;
+  }>;
+  
+  /**
+   * Telegram Web App
+   */
+  webApp: WebApp;
+}

@@ -4,7 +4,7 @@
     "module": "amd",
     "lib": ["es2015", "dom"],
     "declaration": true,
-    "outFile": "./dest/portex-sdk.js",
+    "outFile": "dist/portex-sdk.js",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -22,5 +22,5 @@
     }
   },
   "include": ["packages/**/*"],
-  "exclude": ["node_modules", "dest", "test"]
+  "exclude": ["node_modules", "dist", "test"]
 } 

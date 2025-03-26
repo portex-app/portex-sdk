@@ -12,7 +12,7 @@
     "lint": "eslint packages/**/*.ts",
     "format": "prettier --write \"packages/**/*.ts\"",
     "docs": "typedoc packages/index.ts",
-    "serve": "cd dest && python3 -m http.server 8080"
+    "serve": "cd dist && python3 -m http.server 8080"
   },
   "keywords": [
     "sdk",
