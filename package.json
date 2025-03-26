@@ -12,7 +12,8 @@
     "lint": "eslint packages/**/*.ts",
     "format": "prettier --write \"packages/**/*.ts\"",
     "docs": "typedoc packages/index.ts",
-    "serve": "cd dist && python3 -m http.server 8080"
+    "serve": "cd dist && python3 -m http.server 8080",
+    "update-lib": "curl -o lib/telegram-web-app.js https://telegram.org/js/telegram-web-app.js"
   },
   "keywords": [
     "sdk",
