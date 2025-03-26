@@ -30,26 +30,28 @@ const globalWindow = typeof window !== 'undefined' ? window : undefined;
  * Portex SDK 命名空间
  */
 export class Portex {
-  private readonly social: Social;
-  private readonly payment: Payment;
+  readonly #social: Social;
+  readonly #payment: Payment;
+
+  /**
+   * SDK init result
+   */
+  #initResult: VerifyResult | null = null;
 
   /**
    * endpoint url
    */
-  private readonly endpoint: string; 
-  /**
-   * SDK init result
-   */
-  private initResult: VerifyResult | null = null;
+  readonly #endpoint: string; 
+
   /**
    * Telegram Web App
    */
   public webApp: WebApp;
 
   constructor(protected readonly config: SDKConfig = { environment: 'prod', appId: ''}) {
-    this.endpoint = (config.environment || 'prod') === 'prod'
-      ? 'https://api.portex.cloud'
-      : 'https://dev.api.portex.cloud';
+    this.#endpoint = (config.environment || 'prod') === 'dev'
+      ? 'https://dev.api.portex.cloud'
+      : 'https://api.portex.cloud';
     
     if (!globalWindow) {
       throw new Error('SDK must run in browser environment');
@@ -61,8 +63,8 @@ export class Portex {
     this.webApp = globalWindow.Telegram.WebApp;
 
     // 初始化模块
-    this.social = new Social(this);
-    this.payment = new Payment(this);
+    this.#social = new Social(this);
+    this.#payment = new Payment(this);
   }
 
   /**
@@ -74,7 +76,7 @@ export class Portex {
    * @param options.headers Request headers
    * @returns Request result
    */
-  public async request<T>(path: string, options: PortexRequestOptions = {}): Promise<PortexResponse<T>> {
+  public async call<T>(path: string, options: PortexRequestOptions = {}): Promise<PortexResponse<T>> {
     const {
       method = 'GET',
       data,
@@ -92,7 +94,7 @@ export class Portex {
     }
 
     // 处理 GET 请求的 query string
-    let url = `${this.endpoint}${path}`;
+    let url = `${this.#endpoint}${path}`;
     if (method === 'GET' && data) {
       const params = new URLSearchParams();
       Object.entries(data).forEach(([key, value]) => {
@@ -136,29 +138,29 @@ export class Portex {
    */
   async init(): Promise<VerifyResult> {
     try {
-      const resp = await this.request<any>('/sdk/v1/tg/user', {
+      const resp = await this.call<any>('/sdk/v1/tg/user', {
         method: 'POST'
       });
 
       if (resp.ok) {
-        this.initResult = {
+        this.#initResult = {
           status: 'ok',
           timestamp: Date.now()
         };
-        return this.initResult;
+        return this.#initResult;
       } else {
-        this.initResult = {
+        this.#initResult = {
           status: 'failed',
           timestamp: Date.now()
         };
-        return this.initResult;
+        return this.#initResult;
       }
     } catch (error) {
-      this.initResult = {
+      this.#initResult = {
         status: 'error',
         timestamp: Date.now()
       };
-      throw this.initResult;
+      throw this.#initResult;
     }
   }
 
@@ -166,8 +168,8 @@ export class Portex {
    * 检查用户是否已验证
    * @returns 是否已验证
    */
-  isVerified(): boolean {
-    return this.initResult?.status === 'ok';
+  get isVerified(): boolean {
+    return this.#initResult?.status === 'ok';
   }
 
   /**
@@ -176,17 +178,22 @@ export class Portex {
    * @returns 邀请结果
    */
   async invite(options: InviteOptions): Promise<InviteResult> {
-    if (this.initResult?.status !== 'ok') {
+    if (!this.isVerified) {
       throw new Error('User not verified, please call init() method first');
     }
-    return this.social.invite(options);
+    return this.#social.invite(options);
   }
 
-  async queryInvitePayload(key: string): Promise<InvitePayloadResult> {
-    if (this.initResult?.status !== 'ok') {
+  /**
+   * 查询邀请负载
+   * @param key - 邀请负载 key
+   * @returns 邀请负载结果
+   */
+  async getInvitePayload(key: string): Promise<InvitePayloadResult> {
+    if (!this.isVerified) {
       throw new Error('User not verified, please call init() method first');
     }
-    return this.social.queryInvitePayload(key);
+    return this.#social.getInvitePayload(key);
   }
 
   /**
@@ -195,10 +202,10 @@ export class Portex {
    * @returns 支付结果
    */
   async pay(options: PayOptions): Promise<PayResult> {
-    if (this.initResult?.status !== 'ok') {
+    if (!this.isVerified) {
       throw new Error('User not verified, please call init() method first');
     }
-    return this.payment.pay(options);
+    return this.#payment.pay(options);
   }
 
   /**
@@ -207,10 +214,10 @@ export class Portex {
    * @returns 支付结果
    */
   async queryOrder(orderId: string): Promise<PayResult> {
-    if (this.initResult?.status !== 'ok') {
+    if (!this.isVerified) {
       throw new Error('User not verified, please call init() method first');
     }
-    return this.payment.queryOrder(orderId);
+    return this.#payment.queryOrder(orderId);
   }
 }
 

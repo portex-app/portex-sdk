@@ -14,7 +14,7 @@ export default class SocialModule {
    */
   async invite(options: InviteOptions): Promise<InviteResult> {
     // 实现邀请逻辑
-    const resp = await this.portex.request<InviteResult>('/sdk/v1/tg/invite', {
+    const resp = await this.portex.call<InviteResult>('/sdk/v1/tg/invite', {
       method: 'POST',
       data: {
         expire_seconds: options?.expire || 10 * 60,
@@ -58,8 +58,8 @@ export default class SocialModule {
    * @param key - payload key
    * @returns 邀请结果
    */
-  async queryInvitePayload(key: string): Promise<InvitePayloadResult> {
-    const resp = await this.portex.request<InvitePayloadResult>('/sdk/v1/tg/payload', {
+  async getInvitePayload(key: string): Promise<InvitePayloadResult> {
+    const resp = await this.portex.call<InvitePayloadResult>('/sdk/v1/tg/payload', {
       method: 'GET',
       data: { key }
     });
