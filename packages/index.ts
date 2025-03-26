@@ -222,4 +222,9 @@ export class Portex {
 }
 
 // 导出类型定义
-export * from './core/types'; 
+export {
+  SDKConfig,
+  InviteOptions,
+  InviteResult,
+  InvitePayloadResult,
+} from './core/types'; 

@@ -89,9 +89,9 @@ export interface PortexResponse<T> {
 
 export interface PortexResponseBody<T> {
   ok: boolean;
-  is_dev: boolean;
-  desc: string;
   result: T | null;
+  is_dev?: boolean;
+  desc?: string;
 }
 
 export interface PortexRequestOptions {
