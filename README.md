@@ -1,49 +1,49 @@
 # Portex SDK
 
-Portex SDK 是一个为 Telegram Web App 设计的 SDK，提供了以下主要功能：
+Portex SDK is designed for Telegram Web App, providing the following main features:
 
-- 用户验证
-- 社交功能（好友邀请）
-- 支付功能（支付、订单查询）
+- User Verification
+- Social Features (Friend Invitation)
+- Payment Features (Payment, Order Query)
 
-## 快速开始
-引用 https://sdk.portex.app/portex-sdk.js
+## Quick Start
+Reference https://sdk.portex.app/portex-sdk.js
 
 ```javascript
-// 初始化 SDK
+// Initialize SDK
 const portex = new Portex({
   appId: 'your-app-id',
-  environment: 'prod' // 或 'dev'
+  environment: 'prod' // or 'dev'
 });
 
-// 初始化并验证用户
+// Initialize and verify user
 await portex.init();
 
-// 邀请好友
+// Invite friends
 const inviteResult = await portex.invite({
-  expire: 3600, // 过期时间（秒）
-  text: '来玩游戏！',
+  expire: 3600, // Expiration time (seconds)
+  text: 'Come play with me!',
   payload: 'custom-data'
 });
 ```
 
-## 开发
+## Development
 ```bash
-# 安装依赖
+# Install dependencies
 pnpm install
 
-# 构建
+# Build
 pnpm build
 
-# 测试
+# Test
 pnpm test
 ```
 
-## API 文档
+## API Documentation
 
 ### portex.init(): Promise<VerifyResult>
 
-初始化 SDK 并验证用户。
+Initialize SDK and verify user.
 
 ```typescript
 interface VerifyResult {
@@ -54,35 +54,35 @@ interface VerifyResult {
 
 ### portex.isVerified(): boolean
 
-检查用户是否已验证。
+Check if user is verified.
 
 ### portex.invite(options: InviteOptions): Promise<InviteResult>
 
-好友邀请接口。
+Friend invitation interface.
 
 ```typescript
 interface InviteOptions {
-  expire: number;      // 过期时间（秒）
-  text?: string;       // 分享文本
-  payload?: string;    // 自定义数据
+  expire: number;      // Expiration time (seconds)
+  text?: string;       // Share text
+  payload?: string;    // Custom data
 }
 
 interface InviteResult {
-  invite_url: string;  // 邀请链接
-  key: string;         // 邀请 ID
+  invite_url: string;  // Invitation link
+  key: string;         // Invitation ID
 }
 ```
+
 ### portex.queryInvitePayload(key: string): Promise<InvitePayloadResult>
 
-获取邀请信息
+Get invitation information
 
 ```typescript
 interface InvitePayloadResult {
-  payload: string;  // 邀请payload
+  payload: string;  // Invitation payload
 }
-
 ```
 
-## 许可证
+## License
 
 MIT 
