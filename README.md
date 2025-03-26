@@ -7,7 +7,7 @@ Portex SDK is designed for Telegram Web App, providing the following main featur
 - Payment Features (Payment, Order Query)
 
 ## Quick Start
-Reference https://sdk.portex.app/portex-sdk.js
+Reference https://sdk.portex.app/portex-sdk.min.js
 
 ```javascript
 // Initialize SDK
