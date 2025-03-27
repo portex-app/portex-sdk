@@ -7,8 +7,9 @@ import {
   PortexResponseBody,
   VerifyResult,
   InvitePayloadResult,
-  PayOptions,
-  PayResult
+  PaymentOptions,
+  PaymentResult,
+  OrderResult
 } from './core/types';
 import WebApp from 'telegram-web-app';
 
@@ -201,7 +202,7 @@ export class Portex {
    * @param options - 支付选项
    * @returns 支付结果
    */
-  async pay(options: PayOptions): Promise<PayResult> {
+  async pay(options: PaymentOptions): Promise<PaymentResult> {
     if (!this.isVerified) {
       throw new Error('User not verified, please call init() method first');
     }
@@ -213,7 +214,7 @@ export class Portex {
    * @param orderId - 订单 ID
    * @returns 支付结果
    */
-  async queryOrder(orderId: string): Promise<PayResult> {
+  async queryOrder(orderId: string): Promise<OrderResult> {
     if (!this.isVerified) {
       throw new Error('User not verified, please call init() method first');
     }

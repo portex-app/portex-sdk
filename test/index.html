@@ -136,8 +136,47 @@
 
         <div class="section">
             <h2>Payment Features</h2>
+            <div class="input-group">
+                <label for="tgUserId">TG ID:</label>
+                <input type="text" id="tgUserId" placeholder="Enter TG User ID" value="">
+            </div>
+            <div class="input-group">
+                <label for="title">Title:</label>
+                <input type="text" id="title" placeholder="Enter title" value="Book">
+            </div>
+            <div class="input-group">
+                <label for="amount">Amount:</label>
+                <input type="number" id="amount" placeholder="Enter amount" value="1">
+            </div>
+            <div class="input-group">
+                <label for="label">Label:</label>
+                <input type="text" id="label" placeholder="Enter label" value="Items">
+            </div>
+            <div class="input-group">
+                <label for="description">Description:</label>
+                <input type="text" id="description" placeholder="Enter description" value="Good Book">
+            </div>
+
+            <div class="input-group">
+                <label for="payload">Payload:</label>
+                <input type="text" id="payload" placeholder="Enter payload" value="a=1&b=2">
+            </div>
+            <div class="input-group">
+                <label for="photoUrl">Photo URL:</label>
+                <input type="text" id="photoUrl" placeholder="Enter photo URL" value="https://t.me/i/userpic/320/gSHQO0dTQnqeTIA_kDyOtMKU1e2txlGNvE1tVreUe1u1zCBOv3eHrF6xd9ep5Tap.svg">
+            </div>
+            <div class="input-group">
+                <label for="callbackUrl">Callback URL:</label>
+                <input type="text" id="callbackUrl" placeholder="Enter callback URL" value="">
+            </div>
             <div class="button-group">
                 <button id="payBtn" disabled>Make Payment</button>
+            </div>
+            <div class="input-group">
+                <label for="orderId">Order ID:</label>
+                <input type="text" id="orderId" placeholder="Enter order ID" value="test-order-id">
+            </div>
+            <div class="button-group">
                 <button id="queryOrderBtn" disabled>Query Order</button>
             </div>
             <div id="paymentResult" class="result"></div>
@@ -176,6 +215,17 @@
         const queryInviteBtn = document.getElementById('queryInviteBtn');
         const inviteTextInput = document.getElementById('inviteText');
 
+        // Payment inputs
+        const amountInput = document.getElementById('amount');
+        const callbackUrlInput = document.getElementById('callbackUrl');
+        const descriptionInput = document.getElementById('description');
+        const labelInput = document.getElementById('label');
+        const payloadInput = document.getElementById('payload');
+        const photoUrlInput = document.getElementById('photoUrl');
+        const tgUserIdInput = document.getElementById('tgUserId');
+        const titleInput = document.getElementById('title');
+        const orderIdInput = document.getElementById('orderId');
+
         // Result display areas
         const initResult = document.getElementById('initResult');
         const inviteResult = document.getElementById('inviteResult');
@@ -209,6 +259,7 @@
                     queryOrderBtn.disabled = false;
                     queryInviteBtn.disabled = false;
                     sdk.webApp.expand();
+                    tgUserIdInput.value = sdk.webApp.initDataUnsafe.user.id;
                 }else{
                     showResult(initResult, result, true);
                 }
@@ -257,12 +308,17 @@
             }
             try {
                 const result = await sdk.pay({
-                    amount: 100,
-                    currency: 'CNY',
-                    productId: 'test-product',
-                    productName: 'Test Product'
+                    amount: Number(amountInput.value),
+                    callback_url: callbackUrlInput.value.trim(),
+                    description: descriptionInput.value.trim(),
+                    label: labelInput.value.trim(),
+                    payload: payloadInput.value.trim(),
+                    photo_url: photoUrlInput.value.trim(),
+                    tg_use_id: tgUserIdInput.value.trim(),
+                    title: titleInput.value.trim()
                 });
                 showResult(paymentResult, result);
+                orderIdInput.value = result.tg_payment_id;
             } catch (error) {
                 showResult(paymentResult, error.message, true);
             }
@@ -275,7 +331,7 @@
                 return;
             }
             try {
-                const result = await sdk.queryOrder('test-order-id');
+                const result = await sdk.queryOrder(orderIdInput.value.trim());
                 showResult(paymentResult, result);
             } catch (error) {
                 showResult(paymentResult, error.message, true);
@@ -303,3 +359,4 @@
     </script>
 </body>
 </html> 
+

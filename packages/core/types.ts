@@ -49,32 +49,63 @@ export interface InvitePayloadResult {
 /**
  * 支付选项
  */
-export interface PayOptions {
+export interface PaymentOptions {
   /** 支付金额（单位：分） */
   amount: number;
-  /** 货币类型 */
-  currency: string;
-  /** 商品 ID */
-  productId: string;
-  /** 商品名称 */
-  productName: string;
-  /** 支付渠道 */
-  channel?: 'wechat' | 'alipay' | 'apple' | 'google';
+  /** 回调 URL */
+  callback_url: string;
+  /** 描述 */
+  description: string;
+  /** 标签 */
+  label: string;
+  /** 负载 */
+  payload: string;
+  /** 图片高度 */
+  photo_height: number;
+  /** 图片宽度 */
+  photo_width: number;
+  /** 图片大小 */
+  photo_size: number;
+  /** 图片 URL */
+  photo_url: string;
+  /** Telegram 用户 ID */
+  tg_use_id: string;
+  /** 标题 */
+  title: string;
 }
 
 /**
  * 支付结果
  */
-export interface PayResult {
-  /** 订单 ID */
-  orderId: string;
-  /** 支付状态 */
-  status: 'success' | 'failed' | 'pending';
-  /** 支付金额 */
-  amount: number;
-  /** 支付时间 */
-  timestamp: number;
+export interface PaymentResult {
+  /** 支付 ID */
+  tg_payment_id: number;
+  /** 支付 URL */
+  tg_payment_url: string;
 } 
+
+export interface OrderResult {
+  /** 金额 */
+  amount: number;
+  /** 应用 ID */
+  application_id: string;
+  /** 描述 */
+  description: string;
+  /** 标签 */
+  label: string;
+  /** 负载 */
+  payload: string;
+  /** 状态 */
+  status: number;
+  /** 状态描述 */
+  status_description: string;
+  /** 支付 ID */
+  tg_payment_id: string;
+  /** Telegram 用户 ID */
+  tg_use_id: string;
+  /** 标题 */
+  title: string;
+}
 
 /**
  * 请求结果
