@@ -1,4 +1,4 @@
-import { PayOptions, PayResult, IPortex } from '../core/types';
+import { PaymentOptions, PaymentResult, OrderResult, IPortex } from '../core/types';
 
 /**
  * 支付模块实现
@@ -12,8 +12,8 @@ export default class PaymentModule {
    * @param options - 支付选项
    * @returns 支付结果
    */
-  async pay(options: PayOptions): Promise<PayResult> {
-    const resp = await this.portex.call<any>('/sdk/v1/tg/pay', {
+  async pay(options: PaymentOptions): Promise<PaymentResult> {
+    const resp = await this.portex.call<any>('/sdk/v1/tg/payment/create', {
       method: 'POST',
       data: options
     });
@@ -32,10 +32,9 @@ export default class PaymentModule {
    * @param orderId - 订单 ID
    * @returns 支付结果
    */
-  async queryOrder(orderId: string): Promise<PayResult> {
-    const resp = await this.portex.call<any>('/sdk/v1/tg/order', {
-      method: 'GET',
-      data: { orderId }
+  async queryOrder(orderId: string): Promise<OrderResult> {
+    const resp = await this.portex.call<any>(`/sdk/v1/tg/payment/${orderId}`, {
+      method: 'GET'
     });
     if (!resp.ok) {
       throw new Error('Failed to get order result');
