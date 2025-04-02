@@ -191,12 +191,18 @@ export class Portex {
    * @param options - Invite options
    * @returns Invite result
    */
-  async copyInviteUrl(options: InviteOptions): Promise<InviteResult> {
+  async getInviteUrl(options: InviteOptions): Promise<InviteResult> {
     if (!this.isVerified) {
       throw new Error('User not verified, please call init() method first');
     }
-    return this.#social.copyInviteUrl(options);
+    return this.#social.getInviteUrl(options);
   }
+
+  /**
+   * Get invite payload
+   * @param key - Invite key
+   * @returns Invite payload result
+   */
   async getInvitePayload(key: string): Promise<InvitePayloadResult> {
     if (!this.isVerified) {
       throw new Error('User not verified, please call init() method first');

@@ -167,7 +167,7 @@
             </div>
             <div class="button-group">
                 <button id="inviteBtn" disabled>Invite Friend</button>
-                <button id="copyInviteUrlBtn" disabled>Copy Invite URL</button>
+                <button id="getInviteUrlBtn" disabled>Get Invite URL</button>
             </div>
             <div class="input-group">
                 <label for="payloadKey">Payload Key:</label>
@@ -231,7 +231,7 @@
         </div>
     </div>
 
-    <script src="../dist/portex-sdk.js"></script>
+    <script src="../dist/portex-sdk.min.js"></script>
     <script>
         let sdk = null;
 
@@ -256,7 +256,7 @@
         const initBtn = document.getElementById('initBtn');
         const checkVerifiedBtn = document.getElementById('checkVerifiedBtn');
         const inviteBtn = document.getElementById('inviteBtn');
-        const copyInviteUrlBtn = document.getElementById('copyInviteUrlBtn');
+        const getInviteUrlBtn = document.getElementById('getInviteUrlBtn');
         const payBtn = document.getElementById('payBtn');
         const queryOrderBtn = document.getElementById('queryOrderBtn');
         const invitePayloadInput = document.getElementById('invitePayload');
@@ -315,7 +315,7 @@
                     showResult(initResult, result);
                     checkVerifiedBtn.disabled = false;
                     inviteBtn.disabled = false;
-                    copyInviteUrlBtn.disabled = false;
+                    getInviteUrlBtn.disabled = false;
                     payBtn.disabled = false;
                     queryOrderBtn.disabled = false;
                     queryInviteBtn.disabled = false;
@@ -364,13 +364,13 @@
             }
         });
 
-        copyInviteUrlBtn.addEventListener('click', async () => {
+        getInviteUrlBtn.addEventListener('click', async () => {
             if (!sdk) {
                 showResult(inviteResult, 'SDK not initialized', true);
                 return;
             }
             try {
-                const result = await sdk.copyInviteUrl({
+                const result = await sdk.getInviteUrl({
                     expire: 5,
                     text: inviteTextInput.value.trim(),
                     payload: invitePayloadInput.value.trim()

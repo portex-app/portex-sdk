@@ -17,6 +17,7 @@ execSync('tsc', { stdio: 'inherit' });
 const telegramWebAppPath = path.join(__dirname, '../lib/telegram-web-app.js');
 const telegramWebAppContent = fs.readFileSync(telegramWebAppPath, 'utf8');
 
+
 // 读取编译后的SDK文件
 const sdkPath = path.join(distDir, 'portex-sdk.js');
 const sdkContent = fs.readFileSync(sdkPath, 'utf8');
