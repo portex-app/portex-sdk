@@ -78,12 +78,19 @@ console.log('Minifying code...');
     mangle: true,
     format: {
       comments: false
+    },
+    sourceMap: {
+      filename: 'portex-sdk.min.js',
+      url: 'portex-sdk.min.js.map',
+      includeSources: true
     }
   });
 
   // 写入压缩后的文件
   fs.writeFileSync(path.join(distDir, 'portex-sdk.min.js'), minified.code);
-  console.log('Minified code saved to portex-sdk.min.js');
+  // 写入 SourceMap 文件
+  fs.writeFileSync(path.join(distDir, 'portex-sdk.min.js.map'), minified.map);
+  console.log('Minified code and source map saved');
 })();
 
 // 复制测试页面
@@ -100,18 +107,17 @@ const updatedTestPageContent = testPageContent.replace(
 );
 fs.writeFileSync(path.join(distDir, 'index.html'), updatedTestPageContent);
 
-// 复制 docs 目录到 dist 目录
-console.log('Copying docs...');
-const docsDir = path.join(__dirname, '../docs');
-const distDocsDir = path.join(distDir, 'docs');
+/**
+ * 复制目录及其内容
+ * @param {string} src 源目录路径
+ * @param {string} dest 目标目录路径
+ */
+function copyDirectory(src, dest) {
+  // 确保目标目录存在
+  if (!fs.existsSync(dest)) {
+    fs.mkdirSync(dest, { recursive: true });
+  }
 
-// 确保目标目录存在
-if (!fs.existsSync(distDocsDir)) {
-  fs.mkdirSync(distDocsDir, { recursive: true });
-}
-
-// 复制整个目录
-function copyDir(src, dest) {
   const entries = fs.readdirSync(src, { withFileTypes: true });
   
   for (const entry of entries) {
@@ -120,13 +126,23 @@ function copyDir(src, dest) {
     
     if (entry.isDirectory()) {
       fs.mkdirSync(destPath, { recursive: true });
-      copyDir(srcPath, destPath);
+      copyDirectory(srcPath, destPath);
     } else {
       fs.copyFileSync(srcPath, destPath);
     }
   }
 }
 
-copyDir(docsDir, distDocsDir);
+// 复制 docs 目录到 dist 目录
+console.log('Copying docs...');
+const docsDir = path.join(__dirname, '../docs');
+const distDocsDir = path.join(distDir, 'docs');
+copyDirectory(docsDir, distDocsDir);
+
+// 复制测试资源目录
+console.log('Copying test assets...');
+const testAssetsDir = path.join(__dirname, '../test/assets');
+const distTestAssetsDir = path.join(distDir, 'assets');
+copyDirectory(testAssetsDir, distTestAssetsDir);
 
 console.log('Bundle created successfully!'); 

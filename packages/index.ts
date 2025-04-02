@@ -9,6 +9,7 @@ import {
   InvitePayloadResult,
   PaymentOptions,
   PaymentResult,
+  InvoiceClosedResult,
   OrderResult
 } from './core/types';
 import WebApp from 'telegram-web-app';
@@ -24,11 +25,11 @@ declare global {
   }
 }
 
-// 获取全局window对象
+// Get global window object
 const globalWindow = typeof window !== 'undefined' ? window : undefined;
 
 /**
- * Portex SDK 命名空间
+ * Portex SDK namespace
  */
 export class Portex {
   readonly #social: Social;
@@ -89,12 +90,12 @@ export class Portex {
       'X-App-Id': this.config.appId
     };
 
-    // 如果有 initData，添加到请求头
+    // If there is initData, add it to the request headers
     if (this.webApp?.initData) {
       defaultHeaders['X-Tg-InitData'] = this.webApp.initData;
     }
 
-    // 处理 GET 请求的 query string
+    // Handle GET request query string
     let url = `${this.#endpoint}${path}`;
     if (method === 'GET' && data) {
       const params = new URLSearchParams();
@@ -121,7 +122,7 @@ export class Portex {
     try {
       responseData = await response.json();
     } catch (e) {
-      // 如果响应体为空，responseData 保持为 null
+      // If the response body is empty, responseData remains null
     }
 
     return {
@@ -134,8 +135,8 @@ export class Portex {
   }
 
   /**
-   * 初始化SDK并验证用户
-   * @returns 初始化结果
+   * Initialize SDK and verify user
+   * @returns Initialization result
    */
   async init(): Promise<VerifyResult> {
     try {
@@ -166,17 +167,17 @@ export class Portex {
   }
 
   /**
-   * 检查用户是否已验证
-   * @returns 是否已验证
+   * Check if user is verified
+   * @returns Whether user is verified
    */
   get isVerified(): boolean {
     return this.#initResult?.status === 'ok';
   }
 
   /**
-   * 邀请好友或群组
-   * @param options - 邀请选项
-   * @returns 邀请结果
+   * Invite friends or groups
+   * @param options - Invite options
+   * @returns Invite result
    */
   async invite(options: InviteOptions): Promise<InviteResult> {
     if (!this.isVerified) {
@@ -186,9 +187,9 @@ export class Portex {
   }
 
   /**
-   * 查询邀请负载
-   * @param key - 邀请负载 key
-   * @returns 邀请负载结果
+   * Query invite payload
+   * @param key - Invite payload key
+   * @returns Invite payload result
    */
   async getInvitePayload(key: string): Promise<InvitePayloadResult> {
     if (!this.isVerified) {
@@ -198,21 +199,21 @@ export class Portex {
   }
 
   /**
-   * 发起支付
-   * @param options - 支付选项
-   * @returns 支付结果
+   * Initiate payment
+   * @param options - Payment options
+   * @returns Payment result
    */
-  async pay(options: PaymentOptions): Promise<PaymentResult> {
+  async pay(options: PaymentOptions,callback?: (result: InvoiceClosedResult) => void): Promise<PaymentResult> {
     if (!this.isVerified) {
       throw new Error('User not verified, please call init() method first');
     }
-    return this.#payment.pay(options);
+    return this.#payment.pay(options,callback);
   }
 
   /**
-   * 查询订单
-   * @param orderId - 订单 ID
-   * @returns 支付结果
+   * Query order
+   * @param orderId - Order ID
+   * @returns Payment result
    */
   async queryOrder(orderId: string): Promise<OrderResult> {
     if (!this.isVerified) {
@@ -220,9 +221,32 @@ export class Portex {
     }
     return this.#payment.queryOrder(orderId);
   }
+
+  /**
+   * Resume payment
+   * @param callback - Payment result callback
+   * @returns Payment result
+   */
+  async resumePayment(callback?: (result: InvoiceClosedResult) => void): Promise<PaymentResult | null> {
+    if (!this.isVerified) {
+      throw new Error('User not verified, please call init() method first');
+    }
+    return this.#payment.resumePayment(callback);
+  }
+
+  /**
+   * Whether there is a pending payment URL
+   * @returns Whether there is a pending payment URL
+   */
+  hasPendingPayment(): boolean {
+    if (!this.isVerified) {
+      throw new Error('User not verified, please call init() method first');
+    }
+    return this.#payment.hasPendingPayment();
+  }
 }
 
-// 导出类型定义
+// Export type definitions
 export {
   SDKConfig,
   InviteOptions,

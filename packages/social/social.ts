@@ -1,19 +1,19 @@
 import { InviteOptions, InviteResult,InvitePayloadResult, IPortex } from '../core/types';
 
 /**
- * 社交模块实现
+ * Social module implementation
  * @internal
  */
 export default class SocialModule {
   constructor(private readonly portex: IPortex) {}
 
   /**
-   * 邀请好友或群组
-   * @param options - 邀请选项
-   * @returns 邀请结果
+   * Invite friends or groups
+   * @param options - Invite options
+   * @returns Invite result
    */
   async invite(options: InviteOptions): Promise<InviteResult> {
-    // 实现邀请逻辑
+    // Implement invite logic
     const resp = await this.portex.call<InviteResult>('/sdk/v1/tg/invite', {
       method: 'POST',
       data: {
@@ -40,7 +40,7 @@ export default class SocialModule {
       inviteUrl
     )}&text=${encodeURIComponent(options.text || "")}`;
 
-    // 打开分享链接
+    // Open share link
     this.portex.webApp?.openTelegramLink(shareUrl);
     
     if (!result?.invite_url) {
@@ -54,9 +54,9 @@ export default class SocialModule {
   }
 
   /**
-   * 查询邀请结果
-   * @param key - payload key
-   * @returns 邀请结果
+   * Query invite result
+   * @param key - Payload key
+   * @returns Invite result
    */
   async getInvitePayload(key: string): Promise<InvitePayloadResult> {
     const resp = await this.portex.call<InvitePayloadResult>('/sdk/v1/tg/payload', {

@@ -1,114 +1,129 @@
 import WebApp from 'telegram-web-app';
 
 /**
- * SDK 配置接口
+ * SDK Configuration Interface
  */
 export interface SDKConfig {
-  /** 应用 ID */
+  /** Application ID */
   appId: string;
-  /** 环境（development/production） */
+  /** Environment (development/production) */
   environment: 'dev' | 'prod';
 }
 
 /**
- * 验证结果
+ * Verification Result
  */
 export interface VerifyResult {
-  /** 验证状态 */
+  /** Verification status */
   status: 'ok' | 'failed' | 'error';
-  /** 验证时间 */
+  /** Verification timestamp */
   timestamp: number;
 }
 
 export interface InviteOptions {
-  /** 过期时间 */
+  /** Expiration time */
   expire: number;
-  /** 分享文本 */
+  /** Share text */
   text?: string;
-  /** 负载 */
+  /** Payload */
   payload?: string;
 }
 
 /**
- * 邀请结果
+ * Invite Result
  */
 export interface InviteResult {
-  /** 邀请链接 */
+  /** Invite URL */
   invite_url: string;
-  /** 邀请 ID */
+  /** Invite ID */
   key: string;
 }
 
 /**
- * 邀请负载结果
+ * Invite Payload Result
  */
 export interface InvitePayloadResult {
-  /** 邀请负载 */
+  /** Invite payload */
   payload: string;
-}
-/**
- * 支付选项
- */
-export interface PaymentOptions {
-  /** 支付金额（单位：分） */
-  amount: number;
-  /** 回调 URL */
-  callback_url: string;
-  /** 描述 */
-  description: string;
-  /** 标签 */
-  label: string;
-  /** 负载 */
-  payload: string;
-  /** 图片高度 */
-  photo_height: number;
-  /** 图片宽度 */
-  photo_width: number;
-  /** 图片大小 */
-  photo_size: number;
-  /** 图片 URL */
-  photo_url: string;
-  /** Telegram 用户 ID */
-  tg_use_id: string;
-  /** 标题 */
-  title: string;
 }
 
 /**
- * 支付结果
+ * Payment Options
+ */
+export interface PaymentOptions {
+  /** Telegram User ID */
+  tg_use_id: string;
+  /** Payment amount (in cents)
+   * @see https://core.telegram.org/bots/api#labeledprice
+   */
+  amount: number;
+  /** Label 
+   * @see https://core.telegram.org/bots/api#labeledprice
+   */
+  label: string;
+  /** Title */
+  title: string;
+  /** Description */
+  description: string;
+  /** Payload */
+  payload?: string;
+  /** Photo height */
+  photo_height?: number;
+  /** Photo width */
+  photo_width?: number;
+  /** Photo size */
+  photo_size?: number;
+  /** Photo URL */
+  photo_url?: string;
+  /** Callback URL */
+  callback_url?: string;
+}
+
+/**
+ * Payment Result
  */
 export interface PaymentResult {
-  /** 支付 ID */
+  /** Payment ID */
   tg_payment_id: number;
-  /** 支付 URL */
+  /** Payment URL */
   tg_payment_url: string;
 } 
 
+/**
+ * Payment Close Result invoiceClosed
+ * - paid – invoice was paid successfully,
+ * - cancelled – user closed this invoice without paying,
+ * - failed – user tried to pay, but the payment was failed,
+ * - pending – the payment is still processing. The bot will receive a service message about the payment status.
+ * @see https://core.telegram.org/bots/webapps#events-available-for-mini-apps
+ */
+export type InvoiceClosedResult = "paid" | "cancelled" | "failed" | "pending";
+
 export interface OrderResult {
-  /** 金额 */
+  /** Amount */
   amount: number;
-  /** 应用 ID */
+  /** Application ID */
   application_id: string;
-  /** 描述 */
+  /** Description */
   description: string;
-  /** 标签 */
+  /** Label */
   label: string;
-  /** 负载 */
+  /** Payload */
   payload: string;
-  /** 状态 */
+  /** Status */
   status: number;
-  /** 状态描述 */
+  /** Status description */
   status_description: string;
-  /** 支付 ID */
+  /** Payment ID */
   tg_payment_id: string;
-  /** Telegram 用户 ID */
+  /** Telegram User ID */
   tg_use_id: string;
-  /** 标题 */
+  /** Title */
   title: string;
 }
 
 /**
- * 请求结果
+ * Request Result
  */
 export interface PortexResponse<T> {
   ok: boolean;
@@ -132,19 +147,19 @@ export interface PortexRequestOptions {
 }
 
 /**
- * 请求接口
+ * Request Interface
  */
 export interface IPortex {
   /**
-   * 请求api
+   * Call API
    */
   call<T>(path: string, options?: PortexRequestOptions): Promise<PortexResponse<T>>;
   /**
-   * 初始化
+   * Initialize
    */
   init(): Promise<VerifyResult>;
   /**
-   * 检查用户是否已验证
+   * Check if user is verified
    */
   readonly isVerified: boolean;
   /**
