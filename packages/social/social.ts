@@ -1,4 +1,5 @@
 import { InviteOptions, InviteResult,InvitePayloadResult, IPortex } from '../core/types';
+import { copyText } from '../lib/until';
 
 /**
  * Social module implementation
@@ -8,11 +9,11 @@ export default class SocialModule {
   constructor(private readonly portex: IPortex) {}
 
   /**
-   * Invite friends or groups
+   * Get invite url
    * @param options - Invite options
    * @returns Invite result
    */
-  async invite(options: InviteOptions): Promise<InviteResult> {
+  private async getInviteUrl(options: InviteOptions): Promise<InviteResult> {
     // Implement invite logic
     const resp = await this.portex.call<InviteResult>('/sdk/v1/tg/invite', {
       method: 'POST',
@@ -32,25 +33,60 @@ export default class SocialModule {
 
     const url = new URL(inviteUrl);
     const key = url.searchParams.get('startapp');
+
     if (!key) {
       throw new Error('Failed to get key parameter');
-    }
-
-    const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(
-      inviteUrl
-    )}&text=${encodeURIComponent(options.text || "")}`;
-
-    // Open share link
-    this.portex.webApp?.openTelegramLink(shareUrl);
-    
-    if (!result?.invite_url) {
-      throw new Error('Failed to get invite url');
     }
     
     return {
       ...result,
       key
     };
+  }
+
+  /**
+   * Invite friends or groups
+   * @param options - Invite options
+   * @returns Invite result
+   */
+  async invite(options: InviteOptions): Promise<InviteResult> {
+    try {
+      const result = await this.getInviteUrl(options);
+
+      const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(
+        result.invite_url
+      )}&text=${encodeURIComponent(options.text || "")}`;
+
+      // Open share link
+      this.portex.webApp?.openTelegramLink(shareUrl);
+
+      return result;
+    } catch (error) {
+      throw new Error('Failed to invite friends or groups');
+    }
+  }
+
+  /**
+   * Copy invite url
+   * @param options - Invite options
+   * @returns Invite result
+   */
+  async copyInviteUrl(options: InviteOptions): Promise<InviteResult> {
+    let result: InviteResult;
+    try {
+      result = await this.getInviteUrl(options);
+    } catch (error) {
+      throw new Error('Failed to get invite url');
+    }
+
+    // Copy invite url
+    try {
+      await copyText(result.invite_url);
+    } catch (error) {
+      throw new Error(JSON.stringify(result));
+    }
+
+    return result;
   }
 
   /**
