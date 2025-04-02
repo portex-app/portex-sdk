@@ -170,6 +170,48 @@ describe('Portex SDK', () => {
       await expect(portex.getInvitePayload('invalid-key'))
         .rejects.toThrow('Failed to get invite result');
     });
+
+    it('should copy invite URL to clipboard', async () => {
+      const mockInviteUrl = 'https://t.me/share/url?startapp=test-invite-key&text=Join%20my%20game!';
+      
+      // Mock navigator.clipboard API
+      const mockClipboard = {
+        writeText: jest.fn().mockResolvedValue(undefined)
+      };
+      global.navigator.clipboard = mockClipboard;
+
+      await portex.copyInviteUrl(mockInviteUrl);
+      expect(mockClipboard.writeText).toHaveBeenCalledWith(mockInviteUrl);
+    });
+
+    it('should fallback to execCommand when clipboard API is not available', async () => {
+      const mockInviteUrl = 'https://t.me/share/url?startapp=test-invite-key&text=Join%20my%20game!';
+      
+      // Mock document.execCommand
+      document.execCommand = jest.fn().mockReturnValue(true);
+      
+      // Remove clipboard API
+      delete global.navigator.clipboard;
+
+      await portex.copyInviteUrl(mockInviteUrl);
+      expect(document.execCommand).toHaveBeenCalledWith('copy');
+    });
+
+    it('should throw error when copy fails', async () => {
+      const mockInviteUrl = 'https://t.me/share/url?startapp=test-invite-key&text=Join%20my%20game!';
+      
+      // Mock navigator.clipboard API to throw error
+      const mockClipboard = {
+        writeText: jest.fn().mockRejectedValue(new Error('Clipboard error'))
+      };
+      global.navigator.clipboard = mockClipboard;
+
+      // Mock document.execCommand to throw error
+      document.execCommand = jest.fn().mockReturnValue(false);
+
+      await expect(portex.copyInviteUrl(mockInviteUrl))
+        .rejects.toThrow('Failed to copy invite URL');
+    });
   });
 
   describe('Payment Module', () => {
