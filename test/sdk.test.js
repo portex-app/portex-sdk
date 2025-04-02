@@ -1,4 +1,4 @@
-const { describe, it, expect, beforeEach } = require('@jest/globals');
+const { describe, it, expect, beforeEach, afterEach } = require('@jest/globals');
 const Portex = require('../dist/portex-sdk.js');
 
 // Mock browser environment
@@ -15,7 +15,10 @@ global.window = {
         auth_date: Date.now(),
         hash: 'test-hash'
       },
-      openTelegramLink: jest.fn()
+      openTelegramLink: jest.fn(),
+      openInvoice: jest.fn((url, callback) => {
+        callback('paid');
+      })
     }
   }
 };
@@ -152,19 +155,55 @@ describe('Portex SDK', () => {
         payload: 'test-payload'
       })).rejects.toThrow('Failed to get invite url');
     });
+
+    it('should throw error when querying invite fails', async () => {
+      global.fetch = jest.fn().mockResolvedValue({
+        ok: false,
+        status: 400,
+        statusText: 'Bad Request',
+        json: () => Promise.resolve({
+          ok: false,
+          error: 'Invalid key'
+        })
+      });
+
+      await expect(portex.getInvitePayload('invalid-key'))
+        .rejects.toThrow('Failed to get invite result');
+    });
   });
 
   describe('Payment Module', () => {
+    let now;
+    
     beforeEach(async () => {
       await portex.init();
+
+      // Mock Date.now
+      now = Date.now();
+      jest.spyOn(Date, 'now').mockImplementation(() => now);
+
+      // Mock WebApp.openInvoice
+      window.Telegram.WebApp.openInvoice = jest.fn((url, callback) => {
+        callback('paid');
+      });
+
+      // Mock localStorage
+      global.localStorage = {
+        getItem: jest.fn(),
+        setItem: jest.fn(),
+        removeItem: jest.fn(),
+        clear: jest.fn()
+      };
+    });
+
+    afterEach(() => {
+      jest.restoreAllMocks();
     });
 
     it('should create payment successfully', async () => {
       const mockPayment = {
-        orderId: 'test-order-id',
-        status: 'pending',
-        amount: 100,
-        timestamp: Date.now()
+        tg_payment_id: 12345,
+        tg_payment_url: 'https://t.me/$123456789_987654321'
       };
       
       global.fetch = jest.fn().mockResolvedValue({
@@ -178,21 +217,32 @@ describe('Portex SDK', () => {
       });
 
       const result = await portex.pay({
+        tg_use_id: '12345',
         amount: 100,
-        currency: 'CNY',
-        productId: 'test-product',
-        productName: 'Test Product'
+        label: 'Test Product',
+        title: 'Test Payment',
+        description: 'Test payment description'
       });
 
       expect(result).toEqual(mockPayment);
+      expect(window.Telegram.WebApp.openInvoice).toHaveBeenCalledWith(
+        mockPayment.tg_payment_url,
+        expect.any(Function)
+      );
     });
 
     it('should query order successfully', async () => {
       const mockOrder = {
-        orderId: 'test-order-id',
-        status: 'completed',
         amount: 100,
-        timestamp: Date.now()
+        application_id: 'test-app-id',
+        description: 'Test payment description',
+        label: 'Test Product',
+        payload: 'test-payload',
+        status: 1,
+        status_description: 'success',
+        tg_payment_id: '12345',
+        tg_use_id: '12345',
+        title: 'Test Payment'
       };
       
       global.fetch = jest.fn().mockResolvedValue({
@@ -211,21 +261,123 @@ describe('Portex SDK', () => {
 
     it('should throw error when payment creation fails', async () => {
       global.fetch = jest.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        statusText: 'OK',
+        json: () => Promise.resolve({
+          ok: true,
+          result: {
+            tg_payment_id: 12345
+            // Missing tg_payment_url
+          }
+        })
+      });
+
+      await expect(portex.pay({
+        tg_use_id: '12345',
+        amount: 100,
+        label: 'Test Product',
+        title: 'Test Payment',
+        description: 'Test payment description'
+      })).rejects.toThrow('Failed to get payment url');
+    });
+
+    it('should handle different payment statuses', async () => {
+      const mockPayment = {
+        tg_payment_id: 12345,
+        tg_payment_url: 'https://t.me/$123456789_987654321'
+      };
+      
+      global.fetch = jest.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        statusText: 'OK',
+        json: () => Promise.resolve({
+          ok: true,
+          result: mockPayment
+        })
+      });
+
+      // Test cancelled status
+      window.Telegram.WebApp.openInvoice = jest.fn((url, callback) => {
+        callback('cancelled');
+      });
+
+      await portex.pay({
+        tg_use_id: '12345',
+        amount: 100,
+        label: 'Test Product',
+        title: 'Test Payment',
+        description: 'Test payment description'
+      });
+
+      // Test failed status
+      window.Telegram.WebApp.openInvoice = jest.fn((url, callback) => {
+        callback('failed');
+      });
+
+      await portex.pay({
+        tg_use_id: '12345',
+        amount: 100,
+        label: 'Test Product',
+        title: 'Test Payment',
+        description: 'Test payment description'
+      });
+
+      // Test pending status
+      window.Telegram.WebApp.openInvoice = jest.fn((url, callback) => {
+        callback('pending');
+      });
+
+      await portex.pay({
+        tg_use_id: '12345',
+        amount: 100,
+        label: 'Test Product',
+        title: 'Test Payment',
+        description: 'Test payment description'
+      });
+    });
+
+    it('should throw error when querying order fails', async () => {
+      global.fetch = jest.fn().mockResolvedValue({
         ok: false,
         status: 400,
         statusText: 'Bad Request',
         json: () => Promise.resolve({
           ok: false,
-          error: 'Invalid payment parameters'
+          error: 'Order not found'
         })
       });
 
-      await expect(portex.pay({
-        amount: 100,
-        currency: 'CNY',
-        productId: 'test-product',
-        productName: 'Test Product'
-      })).rejects.toThrow('Failed to get payment result');
+      await expect(portex.queryOrder('invalid-order-id'))
+        .rejects.toThrow('Failed to get order result');
+    });
+
+    it('should handle resumePayment correctly', async () => {
+      const mockPaymentUrl = 'https://t.me/$123456789_987654321';
+      const mockStorageData = {
+        value: mockPaymentUrl,
+        expire: now + 1000 * 60 * 5 // 5 minutes from now
+      };
+      
+      global.localStorage.getItem = jest.fn(() => JSON.stringify(mockStorageData));
+
+      // Test successful resume
+      window.Telegram.WebApp.openInvoice = jest.fn((url, callback) => {
+        callback('paid');
+      });
+
+      const result = await portex.resumePayment();
+      expect(result).toBe(mockPaymentUrl);
+      expect(window.Telegram.WebApp.openInvoice).toHaveBeenCalledWith(
+        mockPaymentUrl,
+        expect.any(Function)
+      );
+
+      // Test no pending payment
+      global.localStorage.getItem = jest.fn(() => null);
+      await expect(portex.resumePayment())
+        .rejects.toThrow('No pending payment');
     });
   });
 }); 
