@@ -58,43 +58,4 @@ class Storage {
   }
 }
 
-/**
- * Copy text to clipboard
- * @param text Text to copy
- * @returns Promise that resolves when the text is copied
- */
-async function copyText(text: string): Promise<void> {
-  try {
-    // 优先使用现代的 Clipboard API
-    if (navigator.clipboard && window.isSecureContext) {
-      await navigator.clipboard.writeText(text);
-      return;
-    }
-
-    // 后备方案：使用传统的 document.execCommand
-    const textArea = document.createElement('textarea');
-    textArea.value = text;
-    
-    // 避免滚动到页面底部
-    textArea.style.position = 'fixed';
-    textArea.style.left = '-999999px';
-    textArea.style.top = '-999999px';
-    
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-
-    try {
-      document.execCommand('copy');
-    } catch (err) {
-      throw new Error('copy failed');
-    }
-
-    textArea.remove();
-  } catch (err) {
-    throw new Error('can not copy text');
-  }
-}
-
 export const storage = new Storage();
-export { copyText }; 

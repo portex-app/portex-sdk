@@ -1,5 +1,4 @@
 import { InviteOptions, InviteResult,InvitePayloadResult, IPortex } from '../core/types';
-import { copyText } from '../lib/until';
 
 /**
  * Social module implementation
@@ -13,7 +12,7 @@ export default class SocialModule {
    * @param options - Invite options
    * @returns Invite result
    */
-  private async getInviteUrl(options: InviteOptions): Promise<InviteResult> {
+  async getInviteUrl(options: InviteOptions): Promise<InviteResult> {
     // Implement invite logic
     const resp = await this.portex.call<InviteResult>('/sdk/v1/tg/invite', {
       method: 'POST',
@@ -64,29 +63,6 @@ export default class SocialModule {
     } catch (error) {
       throw new Error('Failed to invite friends or groups');
     }
-  }
-
-  /**
-   * Copy invite url
-   * @param options - Invite options
-   * @returns Invite result
-   */
-  async copyInviteUrl(options: InviteOptions): Promise<InviteResult> {
-    let result: InviteResult;
-    try {
-      result = await this.getInviteUrl(options);
-    } catch (error) {
-      throw new Error('Failed to get invite url');
-    }
-
-    // Copy invite url
-    try {
-      await copyText(result.invite_url);
-    } catch (error) {
-      throw new Error(JSON.stringify(result));
-    }
-
-    return result;
   }
 
   /**
