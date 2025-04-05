@@ -177,3 +177,5 @@ export interface IPortex {
    */
   webApp: WebApp;
 }
+
+export { default as WebApp } from 'telegram-web-app';
