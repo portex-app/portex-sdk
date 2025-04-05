@@ -277,4 +277,10 @@ export {
   InviteOptions,
   InviteResult,
   InvitePayloadResult,
+  PaymentOptions,
+  PaymentResult,
+  InvoiceClosedResult,
+  OrderResult,
 } from './core/types'; 
+
+export { default as WebApp } from 'telegram-web-app';

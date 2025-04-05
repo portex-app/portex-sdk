@@ -99,7 +99,10 @@ export interface PaymentResult {
  * - pending – the payment is still processing. The bot will receive a service message about the payment status.
  * @see https://core.telegram.org/bots/webapps#events-available-for-mini-apps
  */
-export type InvoiceClosedResult = "paid" | "cancelled" | "failed" | "pending";
+export interface InvoiceClosedResult  {
+  orderId: number;
+  status: 'paid' | 'cancelled' | 'failed' | 'pending';
+};
 
 export interface OrderResult {
   /** Amount */

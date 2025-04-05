@@ -32,7 +32,7 @@ export default class PaymentModule {
       throw new Error('Failed to get payment url');
     }
 
-    this.portex.webApp.openInvoice(paymentUrl, (result: InvoiceClosedResult) => {
+    this.portex.webApp.openInvoice(paymentUrl, (result: string) => {
       console.log('payment result', result);
       if (result === 'pending' || result === 'cancelled') {
         this.cachePendingPayment(paymentResult);
@@ -40,7 +40,10 @@ export default class PaymentModule {
         this.clearPendingPayment();
       }
 
-      callback?.(result);
+      callback?.({
+        orderId: paymentResult.tg_payment_id,
+        status: result as InvoiceClosedResult['status'],
+      });
     });
 
     return paymentResult;
@@ -57,14 +60,17 @@ export default class PaymentModule {
       throw new Error('No pending payment');
     }
 
-    this.portex.webApp.openInvoice(paymentResult.tg_payment_url, (result: InvoiceClosedResult) => {
+    this.portex.webApp.openInvoice(paymentResult.tg_payment_url, (result: string) => {
       if (result === 'pending' || result === 'cancelled') {
         this.cachePendingPayment(paymentResult);
       }else{
         this.clearPendingPayment();
       }
 
-      callback?.(result);
+      callback?.({
+        orderId: paymentResult.tg_payment_id,
+        status: result as InvoiceClosedResult['status'],
+      });
     });
 
     return paymentResult;
