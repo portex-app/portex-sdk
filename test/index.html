@@ -146,7 +146,7 @@
             <h2>Initialization</h2>
             <div class="input-group">
                 <label for="appId">App ID:</label>
-                <input type="text" id="appId" placeholder="Enter App ID" value="2uGXnAGipOPyfMY09aUlHEtlYYg">
+                <input type="text" id="appId" placeholder="Enter App ID" value="2vGFsSt4dNmbYItGIcbKUwstRdY">
             </div>
             <div class="button-group">
                 <button id="initBtn">Initialize SDK</button>
@@ -162,8 +162,12 @@
                 <input type="text" id="inviteText" placeholder="Enter invite text" value="Hi, share a game with you.">
             </div>
             <div class="input-group">
+                <label for="startParam">Start Param:</label>
+                <input type="text" id="startParam" placeholder="Enter start param" value="">
+            </div>
+            <div class="input-group">
                 <label for="invitePayload">Invite Payload:</label>
-                <input type="text" id="invitePayload" placeholder="Enter invite payload" value="let's play game">
+                <input type="text" id="invitePayload" placeholder="Enter invite payload" value="">
             </div>
             <div class="button-group">
                 <button id="inviteBtn" disabled>Invite Friend</button>
@@ -174,7 +178,9 @@
                 <input type="text" id="payloadKey" placeholder="Enter payload key to query">
             </div>
             <div class="button-group">
-                <button id="queryInviteBtn" disabled>Query Invite</button>
+
+                <button id="getStartParamBtn" disabled>Get Start Param</button>
+                <button id="queryInviteBtn" disabled>Query Invite Payload</button>
             </div>
             <div id="inviteResult" class="result"></div>
         </div>
@@ -256,7 +262,9 @@
         const initBtn = document.getElementById('initBtn');
         const checkVerifiedBtn = document.getElementById('checkVerifiedBtn');
         const inviteBtn = document.getElementById('inviteBtn');
+        const startParamInput = document.getElementById('startParam');
         const getInviteUrlBtn = document.getElementById('getInviteUrlBtn');
+        const getStartParamBtn = document.getElementById('getStartParamBtn');
         const payBtn = document.getElementById('payBtn');
         const queryOrderBtn = document.getElementById('queryOrderBtn');
         const invitePayloadInput = document.getElementById('invitePayload');
@@ -319,6 +327,7 @@
                     payBtn.disabled = false;
                     queryOrderBtn.disabled = false;
                     queryInviteBtn.disabled = false;
+                    getStartParamBtn.disabled = false;
                     sdk.webApp.expand();
                     tgUserIdInput.value = sdk.webApp.initDataUnsafe.user.id;
 
@@ -351,9 +360,10 @@
             }
             try {
                 const result = await sdk.invite({
-                    expire: 5,
+                    expire: 30,
                     text: inviteTextInput.value.trim(),
-                    payload: invitePayloadInput.value.trim()
+                    payload: invitePayloadInput.value.trim(),
+                    start_param: startParamInput.value.trim()
                 });
                 showResult(inviteResult, result);
                 if (result.key) {
@@ -371,11 +381,15 @@
             }
             try {
                 const result = await sdk.getInviteUrl({
-                    expire: 5,
+                    expire: 30,
                     text: inviteTextInput.value.trim(),
-                    payload: invitePayloadInput.value.trim()
+                    payload: invitePayloadInput.value.trim(),
+                    start_param: startParamInput.value.trim()
                 });
                 showResult(inviteResult, result);
+                if (result.key) {
+                    payloadKeyInput.value = result.key;
+                }
             } catch (error) {
                 showResult(inviteResult, error.message, true);
             }
@@ -475,6 +489,19 @@
                     return;
                 }
                 const result = await sdk.getInvitePayload(key);
+                showResult(inviteResult, result);
+            } catch (error) {
+                showResult(inviteResult, error.message, true);
+            }
+        });
+
+        getStartParamBtn.addEventListener('click', async () => {
+            if (!sdk) {
+                showResult(inviteResult, 'SDK not initialized', true);
+                return;
+            }
+            try {
+                const result = sdk.getStartParam();
                 showResult(inviteResult, result);
             } catch (error) {
                 showResult(inviteResult, error.message, true);

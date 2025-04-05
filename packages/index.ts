@@ -199,6 +199,19 @@ export class Portex {
   }
 
   /**
+   * Get start param from webapp
+   * @returns Start param
+   */
+  getStartParam (): string {
+    if (!this.isVerified) {
+      throw new Error('User not verified, please call init() method first');
+    }
+
+    const url = new URL(window.location.href);
+    return url.searchParams.get('tgWebAppStartParam') || '';
+  }
+  
+  /**
    * Get invite payload
    * @param key - Invite key
    * @returns Invite payload result

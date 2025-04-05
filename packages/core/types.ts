@@ -27,6 +27,8 @@ export interface InviteOptions {
   text?: string;
   /** Payload */
   payload?: string;
+  /** Start param */
+  start_param?: string;
 }
 
 /**
@@ -36,7 +38,7 @@ export interface InviteResult {
   /** Invite URL */
   invite_url: string;
   /** Invite ID */
-  key: string;
+  key?: string;
 }
 
 /**
@@ -158,6 +160,10 @@ export interface IPortex {
    * Initialize
    */
   init(): Promise<VerifyResult>;
+  /**
+   * Get start param
+   */
+  getStartParam(): string;
   /**
    * Check if user is verified
    */
