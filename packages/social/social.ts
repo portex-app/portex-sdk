@@ -18,9 +18,10 @@ export default class SocialModule {
       method: 'POST',
       data: {
         expire_seconds: options?.expire || 10 * 60,
-        payload: options?.payload
+        ...(options?.start_param ? {} : { payload: options?.payload })
       }
     });
+
     if (!resp.body) {
       throw new Error('Failed to get invite result');
     }
@@ -31,16 +32,19 @@ export default class SocialModule {
     }
 
     const url = new URL(inviteUrl);
-    const key = url.searchParams.get('startapp');
 
-    if (!key) {
-      throw new Error('Failed to get key parameter');
+    if (options?.start_param) {
+      url.searchParams.set('startapp', options.start_param);
+      return {
+        invite_url: url.toString()
+      };
+    }else{
+      const key = url.searchParams.get('startapp');
+      return {
+        ...result,
+        key: key || ''
+      };
     }
-    
-    return {
-      ...result,
-      key
-    };
   }
 
   /**
