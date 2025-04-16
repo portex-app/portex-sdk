@@ -14,7 +14,9 @@ import {
   VerifyResult
 } from './core/types';
 
+import Game from './game/game';
 import Payment from './payment/payment';
+import Report from './report/report';
 import Social from './social/social';
 
 declare global {
@@ -34,6 +36,8 @@ const globalWindow = typeof window !== 'undefined' ? window : undefined;
 export class Portex {
   readonly #social: Social;
   readonly #payment: Payment;
+  readonly #report: Report;
+  readonly #game: Game;
 
   /**
    * SDK init result
@@ -67,6 +71,8 @@ export class Portex {
     // 初始化模块
     this.#social = new Social(this);
     this.#payment = new Payment(this);
+    this.#report = new Report(this);
+    this.#game = new Game(this);
   }
 
   /**
@@ -268,5 +274,45 @@ export class Portex {
       throw new Error('User not verified, please call init() method first');
     }
     return this.#payment.hasPendingPayment();
+  }
+
+    /**
+   * Report user set
+   * @param data - user data
+   * @returns boolean - true if success
+   * @throws Error - if failed to report user set
+   */
+  async reportUserSet(data: Object = {}): Promise<boolean> {
+    if (!this.isVerified) {
+      throw new Error('User not verified, please call init() method first');
+    }
+    return this.#report.userSet(data);
+  }
+  
+  /**
+   * Report track
+   * @param eventName - event name
+   * @param data - report track data
+   * @returns boolean - true if success
+   * @throws Error - if failed to report track
+   */
+  async reportTrack(eventName: string, data: Object = {}): Promise<boolean> {
+    if (!this.isVerified) {
+      throw new Error('User not verified, please call init() method first');
+    }
+    return this.#report.track(eventName, data);
+  }
+  
+  /**
+   * save game record
+   * @param data - game data
+   * @returns boolean - true if success
+   * @throws Error - if failed to save game record
+   */
+  async saveGameRecord(data: Object = {}): Promise<boolean> {
+    if (!this.isVerified) {
+      throw new Error('User not verified, please call init() method first');
+    }
+    return this.#game.save(data);
   }
 }
