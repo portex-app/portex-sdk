@@ -104,7 +104,7 @@ export default class PaymentModule {
    * @param orderId - Order ID
    * @returns Order result
    */
-  async queryOrder(orderId: string): Promise<OrderResult> {
+  async queryOrder(orderId: number): Promise<OrderResult> {
     const resp = await this.portex.call<any>(`/v1/getTgPayment`, {
       method: 'POST',
       data: {

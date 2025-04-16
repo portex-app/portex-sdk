@@ -237,7 +237,7 @@
         </div>
     </div>
 
-    <script src="../dist/portex-sdk.min.js"></script>
+    <script src="../dist/portex-sdk.js"></script>
     <script>
         let sdk = null;
 
@@ -314,7 +314,8 @@
                 }
 
                 sdk = new Portex({
-                    appId: appId
+                    appId: appId,
+                    environment: 'dev'
                 });
 
                 const result = await sdk.init();
@@ -469,7 +470,7 @@
                 return;
             }
             try {
-                const result = await sdk.queryOrder(orderIdInput.value.trim());
+                const result = await sdk.queryOrder(Number(orderIdInput.value.trim()));
                 showResult(paymentResult, result);
             } catch (error) {
                 showResult(paymentResult, error.message, true);

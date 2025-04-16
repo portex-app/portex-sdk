@@ -246,7 +246,7 @@ export class Portex {
    * @param orderId - Order ID
    * @returns Payment result
    */
-  async queryOrder(orderId: string): Promise<OrderResult> {
+  async queryOrder(orderId: number): Promise<OrderResult> {
     if (!this.isVerified) {
       throw new Error('User not verified, please call init() method first');
     }

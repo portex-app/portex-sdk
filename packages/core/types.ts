@@ -36,7 +36,7 @@ export interface InviteOptions {
  */
 export interface InviteResult {
   /** Invite URL */
-  invite_url: string;
+  url: string;
   /** Invite ID */
   key?: string;
 }
