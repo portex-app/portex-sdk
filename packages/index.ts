@@ -1,24 +1,21 @@
-import WebApp from 'telegram-web-app';
 import {
-  GameRecordResult,
+  SDKConfig,
   InviteOptions,
-  InvitePayloadResult,
   InviteResult,
-  InvoiceClosedResult,
-  OrderResult,
-  PaymentOptions,
-  PaymentResult,
   PortexRequestOptions,
   PortexResponse,
   PortexResponseBody,
-  SDKConfig,
-  VerifyResult
+  VerifyResult,
+  InvitePayloadResult,
+  PaymentOptions,
+  PaymentResult,
+  InvoiceClosedResult,
+  OrderResult
 } from './core/types';
+import WebApp from 'telegram-web-app';
 
-import Game from './game/game';
-import Payment from './payment/payment';
-import Report from './report/report';
 import Social from './social/social';
+import Payment from './payment/payment';
 
 declare global {
   interface Window {
@@ -37,8 +34,6 @@ const globalWindow = typeof window !== 'undefined' ? window : undefined;
 export class Portex {
   readonly #social: Social;
   readonly #payment: Payment;
-  readonly #report: Report;
-  readonly #game: Game;
 
   /**
    * SDK init result
@@ -57,8 +52,8 @@ export class Portex {
 
   constructor(protected readonly config: SDKConfig = { environment: 'prod', appId: ''}) {
     this.#endpoint = (config.environment || 'prod') === 'dev'
-      ? 'https://dev.sdk.portex.cloud'
-      : 'https://sdk.portex.cloud';
+      ? 'https://dev.api.portex.cloud'
+      : 'https://api.portex.cloud';
     
     if (!globalWindow) {
       throw new Error('SDK must run in browser environment');
@@ -72,8 +67,6 @@ export class Portex {
     // 初始化模块
     this.#social = new Social(this);
     this.#payment = new Payment(this);
-    this.#report = new Report(this);
-    this.#game = new Game(this);
   }
 
   /**
@@ -147,7 +140,7 @@ export class Portex {
    */
   async init(): Promise<VerifyResult> {
     try {
-      const resp = await this.call<any>('/v1/saveTgUser', {
+      const resp = await this.call<any>('/sdk/v1/tg/user', {
         method: 'POST'
       });
 
@@ -276,56 +269,12 @@ export class Portex {
     }
     return this.#payment.hasPendingPayment();
   }
-
-    /**
-   * Report user set
-   * @param data - user data
-   * @returns boolean - true if success
-   * @throws Error - if failed to report user set
-   */
-  async reportUserSet(data: Object = {}): Promise<boolean> {
-    if (!this.isVerified) {
-      throw new Error('User not verified, please call init() method first');
-    }
-    return this.#report.userSet(data);
-  }
-  
-  /**
-   * Report track
-   * @param eventName - event name
-   * @param data - report track data
-   * @returns boolean - true if success
-   * @throws Error - if failed to report track
-   */
-  async reportTrack(eventName: string, data: Object = {}): Promise<boolean> {
-    if (!this.isVerified) {
-      throw new Error('User not verified, please call init() method first');
-    }
-    return this.#report.track(eventName, data);
-  }
-  
-  /**
-   * Save game record
-   * @param record - game record
-   * @returns boolean - true if success
-   * @throws Error - if failed to save game record
-   */
-  async saveGameRecord(record: Uint8Array): Promise<boolean> {
-    if (!this.isVerified) {
-      throw new Error('User not verified, please call init() method first');
-    }
-    return this.#game.saveRecord(record);
-  }
-
-    /**
-   * Get game record
-   * @returns record - game record
-   * @throws Error - if failed to get game record
-   */
-  async getGameRecord(): Promise<GameRecordResult> {
-    if (!this.isVerified) {
-      throw new Error('User not verified, please call init() method first');
-    }
-    return this.#game.getRecord();
-  }
 }
+
+// Export type definitions
+export {
+  SDKConfig,
+  InviteOptions,
+  InviteResult,
+  InvitePayloadResult,
+} from './core/types'; 
