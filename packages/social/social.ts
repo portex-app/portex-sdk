@@ -75,7 +75,7 @@ export default class SocialModule {
    * @returns Invite result
    */
   async getInvitePayload(key: string): Promise<InvitePayloadResult> {
-    const resp = await this.portex.call<InvitePayloadResult>('/v1/getPayload', {
+    const resp = await this.portex.call<InvitePayloadResult>('/v1/getInvitationPayload', {
       method: 'POST',
       data: { key }
     });
