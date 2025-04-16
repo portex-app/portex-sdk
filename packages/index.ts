@@ -1,5 +1,6 @@
 import WebApp from 'telegram-web-app';
 import {
+  GameRecordResult,
   InviteOptions,
   InvitePayloadResult,
   InviteResult,
@@ -304,15 +305,27 @@ export class Portex {
   }
   
   /**
-   * save game record
-   * @param data - game data
+   * Save game record
+   * @param record - game record
    * @returns boolean - true if success
    * @throws Error - if failed to save game record
    */
-  async saveGameRecord(data: Object = {}): Promise<boolean> {
+  async saveGameRecord(record: Uint8Array): Promise<boolean> {
     if (!this.isVerified) {
       throw new Error('User not verified, please call init() method first');
     }
-    return this.#game.save(data);
+    return this.#game.saveRecord(record);
+  }
+
+    /**
+   * Get game record
+   * @returns record - game record
+   * @throws Error - if failed to get game record
+   */
+  async getGameRecord(): Promise<GameRecordResult> {
+    if (!this.isVerified) {
+      throw new Error('User not verified, please call init() method first');
+    }
+    return this.#game.getRecord();
   }
 }
