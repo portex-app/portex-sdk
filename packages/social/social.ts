@@ -26,7 +26,7 @@ export default class SocialModule {
       throw new Error('Failed to get invite result');
     }
     const result = resp.body.result;
-    const inviteUrl = result?.invite_url;
+    const inviteUrl = result?.url;
     if (!inviteUrl) {
       throw new Error('Failed to get invite url');
     }
@@ -36,7 +36,7 @@ export default class SocialModule {
     if (options?.start_param) {
       url.searchParams.set('startapp', options.start_param);
       return {
-        invite_url: url.toString()
+        url: url.toString()
       };
     }else{
       const key = url.searchParams.get('startapp');
@@ -57,7 +57,7 @@ export default class SocialModule {
       const result = await this.getInviteUrl(options);
 
       const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(
-        result.invite_url
+        result.url
       )}&text=${encodeURIComponent(options.text || "")}`;
 
       // Open share link
