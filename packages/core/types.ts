@@ -128,6 +128,14 @@ export interface OrderResult {
 }
 
 /**
+ * Game record result
+ */
+export interface GameRecordResult {
+  /** Game record */
+  record: Uint8Array;
+} 
+
+/**
  * Request Result
  */
 export interface PortexResponse<T> {
@@ -179,3 +187,4 @@ export interface IPortex {
 }
 
 export { default as WebApp } from 'telegram-web-app';
+
