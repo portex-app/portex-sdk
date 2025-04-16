@@ -1,21 +1,21 @@
+import WebApp from 'telegram-web-app';
 import {
-  SDKConfig,
   InviteOptions,
+  InvitePayloadResult,
   InviteResult,
+  InvoiceClosedResult,
+  OrderResult,
+  PaymentOptions,
+  PaymentResult,
   PortexRequestOptions,
   PortexResponse,
   PortexResponseBody,
-  VerifyResult,
-  InvitePayloadResult,
-  PaymentOptions,
-  PaymentResult,
-  InvoiceClosedResult,
-  OrderResult
+  SDKConfig,
+  VerifyResult
 } from './core/types';
-import WebApp from 'telegram-web-app';
 
-import Social from './social/social';
 import Payment from './payment/payment';
+import Social from './social/social';
 
 declare global {
   interface Window {
@@ -52,8 +52,8 @@ export class Portex {
 
   constructor(protected readonly config: SDKConfig = { environment: 'prod', appId: ''}) {
     this.#endpoint = (config.environment || 'prod') === 'dev'
-      ? 'https://dev.api.portex.cloud'
-      : 'https://api.portex.cloud';
+      ? 'https://dev.sdk.portex.cloud'
+      : 'https://sdk.portex.cloud';
     
     if (!globalWindow) {
       throw new Error('SDK must run in browser environment');
@@ -140,7 +140,7 @@ export class Portex {
    */
   async init(): Promise<VerifyResult> {
     try {
-      const resp = await this.call<any>('/sdk/v1/tg/user', {
+      const resp = await this.call<any>('/v1/saveTgUser', {
         method: 'POST'
       });
 

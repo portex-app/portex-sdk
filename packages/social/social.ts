@@ -1,4 +1,4 @@
-import { InviteOptions, InviteResult,InvitePayloadResult, IPortex } from '../core/types';
+import { InviteOptions, InvitePayloadResult, InviteResult, IPortex } from '../core/types';
 
 /**
  * Social module implementation
@@ -14,7 +14,7 @@ export default class SocialModule {
    */
   async getInviteUrl(options: InviteOptions): Promise<InviteResult> {
     // Implement invite logic
-    const resp = await this.portex.call<InviteResult>('/sdk/v1/tg/invite', {
+    const resp = await this.portex.call<InviteResult>('/v1/generateTgInvitationUrl', {
       method: 'POST',
       data: {
         expire_seconds: options?.expire || 10 * 60,
@@ -75,8 +75,8 @@ export default class SocialModule {
    * @returns Invite result
    */
   async getInvitePayload(key: string): Promise<InvitePayloadResult> {
-    const resp = await this.portex.call<InvitePayloadResult>('/sdk/v1/tg/payload', {
-      method: 'GET',
+    const resp = await this.portex.call<InvitePayloadResult>('/v1/getPayload', {
+      method: 'POST',
       data: { key }
     });
     if (!resp.ok) {

@@ -1,4 +1,4 @@
-import { PaymentOptions, PaymentResult, OrderResult,InvoiceClosedResult, IPortex } from '../core/types';
+import { InvoiceClosedResult, IPortex, OrderResult, PaymentOptions, PaymentResult } from '../core/types';
 import { storage } from '../lib/until';
 
 /**
@@ -15,7 +15,7 @@ export default class PaymentModule {
    * @returns Payment result
    */
   async pay(options: PaymentOptions,callback?: (result: InvoiceClosedResult) => void): Promise<PaymentResult> {
-    const resp = await this.portex.call<any>('/sdk/v1/tg/payment/create', {
+    const resp = await this.portex.call<any>('/v1/createTgPayment', {
       method: 'POST',
       data: options
     });
@@ -105,8 +105,11 @@ export default class PaymentModule {
    * @returns Order result
    */
   async queryOrder(orderId: string): Promise<OrderResult> {
-    const resp = await this.portex.call<any>(`/sdk/v1/tg/payment/${orderId}`, {
-      method: 'GET'
+    const resp = await this.portex.call<any>(`/v1/getTgPayment`, {
+      method: 'POST',
+      data: {
+        tg_payment_id: orderId
+      }
     });
     if (!resp.ok) {
       throw new Error('Failed to get order result');
