@@ -1,19 +1,18 @@
-import WebApp from 'telegram-web-app';
 import {
-  GameRecordResult,
+  SDKConfig,
   InviteOptions,
-  InvitePayloadResult,
   InviteResult,
-  InvoiceClosedResult,
-  OrderResult,
-  PaymentOptions,
-  PaymentResult,
   PortexRequestOptions,
   PortexResponse,
   PortexResponseBody,
-  SDKConfig,
-  VerifyResult
+  VerifyResult,
+  InvitePayloadResult,
+  PaymentOptions,
+  PaymentResult,
+  InvoiceClosedResult,
+  OrderResult
 } from './core/types';
+import WebApp from 'telegram-web-app';
 
 import Game from './game/game';
 import Payment from './payment/payment';
@@ -56,10 +55,9 @@ export class Portex {
   public webApp: WebApp;
 
   constructor(protected readonly config: SDKConfig = { environment: 'prod', appId: ''}) {
-    // this.#endpoint = (config.environment || 'prod') === 'dev'
-    //   ? 'https://dev.sdk.portex.cloud'
-    //   : 'https://sdk.portex.cloud';
-    this.#endpoint = "http://localhost:9090"
+    this.#endpoint = (config.environment || 'prod') === 'dev'
+      ? 'https://dev.api.portex.cloud'
+      : 'https://api.portex.cloud';
     
     if (!globalWindow) {
       throw new Error('SDK must run in browser environment');
@@ -330,3 +328,11 @@ export class Portex {
     return this.#game.getRecord();
   }
 }
+
+// Export type definitions
+export {
+  SDKConfig,
+  InviteOptions,
+  InviteResult,
+  InvitePayloadResult,
+} from './core/types';

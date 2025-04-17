@@ -138,7 +138,11 @@ function copyDirectory(src, dest) {
 console.log('Copying docs...');
 const docsDir = path.join(__dirname, '../docs');
 const distDocsDir = path.join(distDir, 'docs');
-copyDirectory(docsDir, distDocsDir);
+try {
+  copyDirectory(docsDir, distDocsDir);
+} catch (error) {
+  console.error('Error copying docs:run pnpm doc first');
+}
 
 // 复制测试资源目录
 console.log('Copying test assets...');
