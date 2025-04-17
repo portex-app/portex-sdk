@@ -9,14 +9,15 @@ export default class GameModule {
 
   /**
    * Save game record
+   * @param name - game record name
    * @param record - game record data
    * @returns boolean - true if success
    * @throws Error - if failed to save game record
    */
-  async saveRecord(record: string): Promise<boolean> {
+  async saveRecord(name: string, record: string): Promise<boolean> {
     const resp = await this.portex.call<null>('/v1/saveGameRecord', {
       method: 'POST',
-      data: { record }
+      data: { name, record }
     });
     if (!resp.ok) {
       throw new Error('Failed to save game record');
@@ -26,12 +27,14 @@ export default class GameModule {
 
   /**
    * Get game record
+   * @param name - game record name
    * @returns record - game record
    * @throws Error - if failed to get game record
    */
-  async getRecord(): Promise<GameRecordResult> {
+  async getRecord(name: string): Promise<GameRecordResult> {
     const resp = await this.portex.call<GameRecordResult>('/v1/getGameRecord', {
       method: 'POST',
+      data: { name }
     });
     if (!resp.ok) {
       throw new Error('Failed to get game record');
