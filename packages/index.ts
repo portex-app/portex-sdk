@@ -1,18 +1,19 @@
+import WebApp from 'telegram-web-app';
 import {
-  SDKConfig,
+  GameRecordResult,
   InviteOptions,
+  InvitePayloadResult,
   InviteResult,
+  InvoiceClosedResult,
+  OrderResult,
+  PaymentOptions,
+  PaymentResult,
   PortexRequestOptions,
   PortexResponse,
   PortexResponseBody,
-  VerifyResult,
-  InvitePayloadResult,
-  PaymentOptions,
-  PaymentResult,
-  InvoiceClosedResult,
-  OrderResult
+  SDKConfig,
+  VerifyResult
 } from './core/types';
-import WebApp from 'telegram-web-app';
 
 import Game from './game/game';
 import Payment from './payment/payment';
@@ -331,8 +332,5 @@ export class Portex {
 
 // Export type definitions
 export {
-  SDKConfig,
-  InviteOptions,
-  InviteResult,
-  InvitePayloadResult,
+  InviteOptions, InvitePayloadResult, InviteResult, SDKConfig
 } from './core/types';
