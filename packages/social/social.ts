@@ -33,18 +33,21 @@ export default class SocialModule {
 
     const url = new URL(inviteUrl);
 
+    
+    if (options?.suffix) {
+      const suffix = options.suffix.startsWith('/') ? options.suffix : `/${options.suffix}`;
+      url.pathname = `${url.pathname}${suffix}`;
+    }
+
     if (options?.start_param) {
       url.searchParams.set('startapp', options.start_param);
-      return {
-        url: url.toString()
-      };
-    }else{
-      const key = url.searchParams.get('startapp');
-      return {
-        ...result,
-        key: key || ''
-      };
     }
+
+    const key = url.searchParams.get('startapp');
+    return {
+      url: url.toString(),
+      key: key || ''
+    };
   }
 
   /**
