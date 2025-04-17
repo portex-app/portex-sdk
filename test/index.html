@@ -263,8 +263,12 @@
         <div class="section">
             <h2>game record Features</h2>
             <div class="input-group">
+                <label for="gameRecordName" class="required">Game Record Name:</label>
+                <input type="text" id="gameRecordName" placeholder="Enter Game Record Name" value="" required>
+            </div>
+            <div class="input-group">
                 <label for="gameRecordData" class="required">Game Record Data:</label>
-                <input type="text" id="gameRecordData" placeholder="Enter Game Record" value="" required>
+                <input type="text" id="gameRecordData" placeholder="Enter Game Record Base64 Data" value="" required>
             </div>
             <div class="button-group">
                 <button id="saveGameRecordBtn">Save Game Record</button>
@@ -337,6 +341,7 @@
         const trackInput = document.getElementById('trackData');
         
         // Game record inputs
+        const gameRecordNameInput = document.getElementById('gameRecordName');
         const gameRecordInput = document.getElementById('gameRecordData');
 
 
@@ -597,8 +602,9 @@
                 return;
             }
             try {
+                const recordName = gameRecordNameInput.value.trim();
                 const record = gameRecordInput.value.trim();
-                const result = await sdk.saveGameRecord(record);
+                const result = await sdk.saveGameRecord(recordName, record);
                 showResult(gameRecordResult, result);
             } catch (error) {
                 showResult(gameRecordResult, error.message, true);
@@ -611,7 +617,8 @@
                 return;
             }
             try {
-                const result = await sdk.getGameRecord();
+                const recordName = gameRecordNameInput.value.trim();
+                const result = await sdk.getGameRecord(recordName);
                 showResult(gameRecordResult, result);
             } catch (error) {
                 showResult(gameRecordResult, error.message, true);

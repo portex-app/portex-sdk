@@ -310,11 +310,11 @@ export class Portex {
    * @returns boolean - true if success
    * @throws Error - if failed to save game record
    */
-  async saveGameRecord(record: string): Promise<boolean> {
+  async saveGameRecord(name: string, record: string): Promise<boolean> {
     if (!this.isVerified) {
       throw new Error('User not verified, please call init() method first');
     }
-    return this.#game.saveRecord(record);
+    return this.#game.saveRecord(name, record);
   }
 
     /**
@@ -322,11 +322,11 @@ export class Portex {
    * @returns record - game record
    * @throws Error - if failed to get game record
    */
-  async getGameRecord(): Promise<GameRecordResult> {
+  async getGameRecord(name: string): Promise<GameRecordResult> {
     if (!this.isVerified) {
       throw new Error('User not verified, please call init() method first');
     }
-    return this.#game.getRecord();
+    return this.#game.getRecord(name);
   }
 }
 
@@ -334,3 +334,4 @@ export class Portex {
 export {
   InviteOptions, InvitePayloadResult, InviteResult, SDKConfig
 } from './core/types';
+
