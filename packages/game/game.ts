@@ -13,7 +13,7 @@ export default class GameModule {
    * @returns boolean - true if success
    * @throws Error - if failed to save game record
    */
-  async saveRecord(record: Uint8Array): Promise<boolean> {
+  async saveRecord(record: string): Promise<boolean> {
     const resp = await this.portex.call<null>('/v1/saveGameRecord', {
       method: 'POST',
       data: { record }

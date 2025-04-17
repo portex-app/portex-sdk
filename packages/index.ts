@@ -56,9 +56,10 @@ export class Portex {
   public webApp: WebApp;
 
   constructor(protected readonly config: SDKConfig = { environment: 'prod', appId: ''}) {
-    this.#endpoint = (config.environment || 'prod') === 'dev'
-      ? 'https://dev.sdk.portex.cloud'
-      : 'https://sdk.portex.cloud';
+    // this.#endpoint = (config.environment || 'prod') === 'dev'
+    //   ? 'https://dev.sdk.portex.cloud'
+    //   : 'https://sdk.portex.cloud';
+    this.#endpoint = "http://localhost:9090"
     
     if (!globalWindow) {
       throw new Error('SDK must run in browser environment');
@@ -310,7 +311,7 @@ export class Portex {
    * @returns boolean - true if success
    * @throws Error - if failed to save game record
    */
-  async saveGameRecord(record: Uint8Array): Promise<boolean> {
+  async saveGameRecord(record: string): Promise<boolean> {
     if (!this.isVerified) {
       throw new Error('User not verified, please call init() method first');
     }

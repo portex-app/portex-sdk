@@ -132,7 +132,7 @@ export interface OrderResult {
  */
 export interface GameRecordResult {
   /** Game record */
-  record: Uint8Array;
+  record: string;
 } 
 
 /**
