@@ -48,18 +48,18 @@ export class Portex {
   /**
    * endpoint url
    */
-  readonly #endpoint: string; 
+  readonly #endpoint: string;
 
   /**
    * Telegram Web App
    */
   public webApp: WebApp;
 
-  constructor(protected readonly config: SDKConfig = { environment: 'prod', appId: ''}) {
+  constructor(protected readonly config: SDKConfig = { environment: 'prod', appId: '' }) {
     this.#endpoint = (config.environment || 'prod') === 'dev'
-      ? 'https://dev.api.portex.cloud'
-      : 'https://api.portex.cloud';
-    
+      ? 'https://dev.sdk.portex.cloud'
+      : 'https://sdk.portex.cloud';
+
     if (!globalWindow) {
       throw new Error('SDK must run in browser environment');
     }
@@ -209,7 +209,7 @@ export class Portex {
    * Get start param from webapp
    * @returns Start param
    */
-  getStartParam (): string {
+  getStartParam(): string {
     if (!this.isVerified) {
       throw new Error('User not verified, please call init() method first');
     }
@@ -217,7 +217,7 @@ export class Portex {
     const url = new URL(window.location.href);
     return url.searchParams.get('tgWebAppStartParam') || '';
   }
-  
+
   /**
    * Get invite payload
    * @param key - Invite key
@@ -235,11 +235,11 @@ export class Portex {
    * @param options - Payment options
    * @returns Payment result
    */
-  async pay(options: PaymentOptions,callback?: (result: InvoiceClosedResult) => void): Promise<PaymentResult> {
+  async pay(options: PaymentOptions, callback?: (result: InvoiceClosedResult) => void): Promise<PaymentResult> {
     if (!this.isVerified) {
       throw new Error('User not verified, please call init() method first');
     }
-    return this.#payment.pay(options,callback);
+    return this.#payment.pay(options, callback);
   }
 
   /**
@@ -277,19 +277,19 @@ export class Portex {
     return this.#payment.hasPendingPayment();
   }
 
-    /**
-   * Report user set
-   * @param data - user data
-   * @returns boolean - true if success
-   * @throws Error - if failed to report user set
-   */
+  /**
+ * Report user set
+ * @param data - user data
+ * @returns boolean - true if success
+ * @throws Error - if failed to report user set
+ */
   async reportUserSet(data: Object = {}): Promise<boolean> {
     if (!this.isVerified) {
       throw new Error('User not verified, please call init() method first');
     }
     return this.#report.userSet(data);
   }
-  
+
   /**
    * Report track
    * @param eventName - event name
@@ -303,7 +303,7 @@ export class Portex {
     }
     return this.#report.track(eventName, data);
   }
-  
+
   /**
    * Save game record
    * @param record - game record
@@ -317,11 +317,11 @@ export class Portex {
     return this.#game.saveRecord(name, record);
   }
 
-    /**
-   * Get game record
-   * @returns record - game record
-   * @throws Error - if failed to get game record
-   */
+  /**
+ * Get game record
+ * @returns record - game record
+ * @throws Error - if failed to get game record
+ */
   async getGameRecord(name: string): Promise<GameRecordResult> {
     if (!this.isVerified) {
       throw new Error('User not verified, please call init() method first');
