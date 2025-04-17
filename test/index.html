@@ -235,6 +235,43 @@
             </div>
             <div id="paymentResult" class="result"></div>
         </div>
+
+        <div class="section">
+            <h2>Report Features</h2>
+            <div class="input-group" style="flex-direction: column; align-items: flex-start;">
+                <label for="userSetData" class="required" style="display: block;">Report User Set(JSON):</label>
+                <textarea id="userSetData" rows="5" cols="40" placeholder="Enter Report User Set(JSON)" value="" required>{}</textarea>
+            </div>
+            <div class="button-group">
+                <button id="reportUserSet">Report User Set</button>
+            </div>
+            <div id="userSetResult" class="result" style="margin-bottom: 20px"></div>
+            <div class="input-group" style="flex-direction: column; align-items: flex-start;">
+                <label for="eventName" class="required">Event Name:</label>
+                <input type="text" id="eventName" placeholder="Enter Event Name" value="" required>
+            </div>
+            <div class="input-group" style="flex-direction: column; align-items: flex-start;">
+                <label for="trackData" class="required">Report Track(JSON):</label>
+                <textarea id="trackData" rows="5" cols="40" placeholder="Enter Report Track(JSON)" value="" required>{}</textarea>
+            </div>    
+            <div class="button-group">
+                <button id="reportTrack">Report Track</button>
+            </div>
+            <div id="trackResult" class="result"></div>
+        </div>
+
+        <div class="section">
+            <h2>game record Features</h2>
+            <div class="input-group">
+                <label for="gameRecordData" class="required">Game Record Data:</label>
+                <input type="text" id="gameRecordData" placeholder="Enter Game Record" value="" required>
+            </div>
+            <div class="button-group">
+                <button id="saveGameRecordBtn">Save Game Record</button>
+                <button id="getGameRecordBtn">Get Game Record</button>
+            </div>
+            <div id="gameRecordResult" class="result"></div>
+        </div>
     </div>
 
     <script src="../dist/portex-sdk.min.js"></script>
@@ -273,6 +310,10 @@
         const inviteTextInput = document.getElementById('inviteText');
         const toggleAdvancedBtn = document.querySelector('.toggle-advanced');
         const advancedParams = document.querySelector('.advanced-params');
+        const reportUserSetBtn = document.getElementById('reportUserSet');
+        const reportTrackBtn = document.getElementById('reportTrack');
+        const saveGameRecordBtn = document.getElementById('saveGameRecordBtn');
+        const getGameRecordBtn = document.getElementById('getGameRecordBtn');
 
         // Payment inputs
         const amountInput = document.getElementById('amount');
@@ -289,6 +330,17 @@
         const initResult = document.getElementById('initResult');
         const inviteResult = document.getElementById('inviteResult');
         const paymentResult = document.getElementById('paymentResult');
+
+        // Report inputs
+        const userSetInput = document.getElementById('userSetData');
+        const eventNameInput = document.getElementById('eventName');
+        const trackInput = document.getElementById('trackData');
+        
+        // Game record inputs
+        const gameRecordInput = document.getElementById('gameRecordData');
+
+
+
 
 
 
@@ -506,6 +558,63 @@
                 showResult(inviteResult, result);
             } catch (error) {
                 showResult(inviteResult, error.message, true);
+            }
+        });
+
+        // report
+        reportUserSetBtn.addEventListener('click', async () => {
+            if (!sdk) {
+                showResult(userSetResult, 'SDK not initialized', true);
+                return;
+            }
+            try {
+                const userSetData = JSON.parse(userSetInput.value.trim());
+                const result = await sdk.reportUserSet(userSetData);
+                showResult(userSetResult, result);
+            } catch (error) {
+                showResult(userSetResult, error.message, true);
+            }
+        });
+
+        reportTrackBtn.addEventListener('click', async () => {
+            if (!sdk) {
+                showResult(trackResult, 'SDK not initialized', true);
+                return;
+            }
+            try {
+                const eventName = eventNameInput.value.trim();
+                const trackData = JSON.parse(trackInput.value.trim());
+                const result = await sdk.reportTrack(eventName, trackData);
+                showResult(trackResult, result);
+            } catch (error) {
+                showResult(trackResult, error.message, true);
+            }
+        });
+
+        saveGameRecordBtn.addEventListener('click', async () => {
+            if (!sdk) {
+                showResult(gameRecordResult, 'SDK not initialized', true);
+                return;
+            }
+            try {
+                const record = gameRecordInput.value.trim();
+                const result = await sdk.saveGameRecord(record);
+                showResult(gameRecordResult, result);
+            } catch (error) {
+                showResult(gameRecordResult, error.message, true);
+            }
+        });
+
+        getGameRecordBtn.addEventListener('click', async () => {
+            if (!sdk) {
+                showResult(gameRecordResult, 'SDK not initialized', true);
+                return;
+            }
+            try {
+                const result = await sdk.getGameRecord();
+                showResult(gameRecordResult, result);
+            } catch (error) {
+                showResult(gameRecordResult, error.message, true);
             }
         });
     </script>
