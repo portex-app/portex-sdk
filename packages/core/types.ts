@@ -25,6 +25,8 @@ export interface InviteOptions {
   expire: number;
   /** Share text */
   text?: string;
+  /** Suffix */
+  suffix?: string;
   /** Payload */
   payload?: string;
   /** Start param */

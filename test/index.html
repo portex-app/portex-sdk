@@ -169,6 +169,10 @@
                 <label for="invitePayload">Invite Payload:</label>
                 <input type="text" id="invitePayload" placeholder="Enter invite payload" value="">
             </div>
+            <div class="input-group">
+                <label for="inviteSuffix">Invite Url Suffix:</label>
+                <input type="text" id="inviteSuffix" placeholder="Enter invite url suffix" value="">
+            </div>
             <div class="button-group">
                 <button id="inviteBtn" disabled>Invite Friend</button>
                 <button id="getInviteUrlBtn" disabled>Get Invite URL</button>
@@ -278,7 +282,7 @@
         </div>
     </div>
 
-    <script src="../dist/portex-sdk.min.js"></script>
+    <script src="../dist/portex-sdk.js"></script>
     <script>
         let sdk = null;
 
@@ -311,6 +315,7 @@
         const invitePayloadInput = document.getElementById('invitePayload');
         const payloadKeyInput = document.getElementById('payloadKey');
         const queryInviteBtn = document.getElementById('queryInviteBtn');
+        const inviteSuffixInput = document.getElementById('inviteSuffix');
         const inviteTextInput = document.getElementById('inviteText');
         const toggleAdvancedBtn = document.querySelector('.toggle-advanced');
         const advancedParams = document.querySelector('.advanced-params');
@@ -343,11 +348,6 @@
         // Game record inputs
         const gameRecordNameInput = document.getElementById('gameRecordName');
         const gameRecordInput = document.getElementById('gameRecordData');
-
-
-
-
-
 
 
         // Toggle advanced parameters
@@ -420,6 +420,7 @@
                 const result = await sdk.invite({
                     expire: 30,
                     text: inviteTextInput.value.trim(),
+                    suffix: inviteSuffixInput.value.trim(),
                     payload: invitePayloadInput.value.trim(),
                     start_param: startParamInput.value.trim()
                 });
@@ -441,6 +442,7 @@
                 const result = await sdk.getInviteUrl({
                     expire: 30,
                     text: inviteTextInput.value.trim(),
+                    suffix: inviteSuffixInput.value.trim(),
                     payload: invitePayloadInput.value.trim(),
                     start_param: startParamInput.value.trim()
                 });
