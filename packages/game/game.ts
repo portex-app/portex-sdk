@@ -1,4 +1,4 @@
-import { GameRecordResult, IPortex } from "packages/core/types";
+import { GameRecordResult, IPortex, ListGameRecordNamesResult } from "packages/core/types";
 
 /**
  * Game module implementation
@@ -42,6 +42,25 @@ export default class GameModule {
     const result = resp.body?.result;
     if (!result) {
       throw new Error('Failed to get game record');
+    }
+    return result;
+  }
+
+    /**
+   * List game record names
+   * @returns record - game record name list
+   * @throws Error - if failed to get game record
+   */
+  async listRecordNames(): Promise<ListGameRecordNamesResult> {
+    const resp = await this.portex.call<ListGameRecordNamesResult>('/v1/listGameRecordNames', {
+      method: 'POST',
+    });
+    if (!resp.ok) {
+      throw new Error('Failed to get game record names');
+    }
+    const result = resp.body?.result;
+    if (!result) {
+      throw new Error('Failed to get game record names');
     }
     return result;
   }

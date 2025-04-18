@@ -5,6 +5,7 @@ import {
   InvitePayloadResult,
   InviteResult,
   InvoiceClosedResult,
+  ListGameRecordNamesResult,
   OrderResult,
   PaymentOptions,
   PaymentResult,
@@ -59,7 +60,7 @@ export class Portex {
     this.#endpoint = (config.environment || 'prod') === 'dev'
       ? 'https://dev.sdk.portex.cloud'
       : 'https://sdk.portex.cloud';
-
+    
     if (!globalWindow) {
       throw new Error('SDK must run in browser environment');
     }
@@ -318,17 +319,32 @@ export class Portex {
   }
 
   /**
- * Get game record
- * @returns record - game record
- * @throws Error - if failed to get game record
- */
+   * Get game record
+   * @returns record - game record
+   * @throws Error - if failed to get game record
+   */
   async getGameRecord(name: string): Promise<GameRecordResult> {
     if (!this.isVerified) {
       throw new Error('User not verified, please call init() method first');
     }
     return this.#game.getRecord(name);
   }
+
+  
+  /**
+   * List game record names
+   * @returns record - game record
+   * @throws Error - if failed to get game record
+   */
+  async listGameRecordNames(): Promise<ListGameRecordNamesResult> {
+    if (!this.isVerified) {
+      throw new Error('User not verified, please call init() method first');
+    }
+    return this.#game.listRecordNames();
+  }
 }
+
+
 
 // Export type definitions
 export {

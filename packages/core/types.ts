@@ -135,6 +135,14 @@ export interface OrderResult {
 export interface GameRecordResult {
   /** Game record */
   record: string;
+}
+
+/**
+ * List game record names
+ */
+export interface ListGameRecordNamesResult {
+  /** Game record names */
+  names: string[];
 } 
 
 /**
