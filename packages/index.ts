@@ -5,6 +5,7 @@ import {
   InvitePayloadResult,
   InviteResult,
   InvoiceClosedResult,
+  ListGameRecordNamesResult,
   OrderResult,
   PaymentOptions,
   PaymentResult,
@@ -57,8 +58,8 @@ export class Portex {
 
   constructor(protected readonly config: SDKConfig = { environment: 'prod', appId: ''}) {
     this.#endpoint = (config.environment || 'prod') === 'dev'
-      ? 'https://dev.api.portex.cloud'
-      : 'https://api.portex.cloud';
+      ? 'https://dev.sdk.portex.cloud'
+      : 'https://sdk.portex.cloud';
     
     if (!globalWindow) {
       throw new Error('SDK must run in browser environment');
@@ -317,7 +318,7 @@ export class Portex {
     return this.#game.saveRecord(name, record);
   }
 
-    /**
+  /**
    * Get game record
    * @returns record - game record
    * @throws Error - if failed to get game record
@@ -328,7 +329,22 @@ export class Portex {
     }
     return this.#game.getRecord(name);
   }
+
+  
+  /**
+   * List game record names
+   * @returns record - game record
+   * @throws Error - if failed to get game record
+   */
+  async listGameRecordNames(): Promise<ListGameRecordNamesResult> {
+    if (!this.isVerified) {
+      throw new Error('User not verified, please call init() method first');
+    }
+    return this.#game.listRecordNames();
+  }
 }
+
+
 
 // Export type definitions
 export {
