@@ -1,41 +1,40 @@
 {
-  "name": "portex-sdk",
-  "version": "1.0.0",
-  "description": "Portex SDK for game development",
-  "main": "dest/portex-sdk.js",
-  "types": "dest/portex-sdk.d.ts",
-  "scripts": {
-    "clean": "rm -rf dest/*",
-    "build": "pnpm clean && tsc && node scripts/bundle.js",
-    "dev": "tsc -w",
-    "test": "jest",
-    "lint": "eslint packages/**/*.ts",
-    "format": "prettier --write \"packages/**/*.ts\"",
-    "doc": "typedoc packages/index.ts packages/core/types.ts",
-    "serve": "cd dist && python3 -m http.server 8080",
-    "update-lib": "curl -o lib/telegram-web-app.js https://telegram.org/js/telegram-web-app.js"
-  },
-  "keywords": [
-    "sdk",
-    "game",
-    "portex"
-  ],
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "@types/jest": "^29.5.12",
-    "@types/node": "^20.11.24",
-    "@typescript-eslint/eslint-plugin": "^7.1.0",
-    "@typescript-eslint/parser": "^7.1.0",
-    "eslint": "^8.57.0",
-    "jest": "^29.7.0",
-    "jest-environment-jsdom": "^29.7.0",
-    "prettier": "^3.2.5",
-    "terser": "^5.39.0",
-    "ts-jest": "^29.1.2",
-    "typedoc": "^0.28.1",
-    "typescript": "^5.3.3"
-  },
-  "dependencies": {},
-  "packageManager": "pnpm@10.8.1+sha512.c50088ba998c67b8ca8c99df8a5e02fd2ae2e2b29aaf238feaa9e124248d3f48f9fb6db2424949ff901cffbb5e0f0cc1ad6aedb602cd29450751d11c35023677"
+    "name": "portex-sdk",
+    "version": "1.0.0",
+    "description": "Portex SDK for game development",
+    "main": "dest/portex-sdk.js",
+    "types": "dest/portex-sdk.d.ts",
+    "scripts": {
+        "clean": "rm -rf dest/*",
+        "build": "pnpm clean && tsc && node scripts/bundle.js",
+        "dev": "tsc -w",
+        "test": "jest",
+        "format": "prettier --write \"packages/**/*.ts\"",
+        "doc": "typedoc packages/index.ts packages/core/types.ts",
+        "serve": "cd dist && python3 -m http.server 8080",
+        "update-lib": "curl -o lib/telegram-web-app.js https://telegram.org/js/telegram-web-app.js"
+    },
+    "keywords": [
+        "sdk",
+        "game",
+        "portex"
+    ],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "@types/jest": "^29.5.12",
+        "@types/node": "^20.11.24",
+        "@typescript-eslint/eslint-plugin": "^7.1.0",
+        "@typescript-eslint/parser": "^7.1.0",
+        "eslint": "^8.57.0",
+        "jest": "^29.7.0",
+        "jest-environment-jsdom": "^29.7.0",
+        "prettier": "^3.2.5",
+        "terser": "^5.39.0",
+        "ts-jest": "^29.1.2",
+        "typedoc": "^0.28.1",
+        "typescript": "^5.3.3"
+    },
+    "dependencies": {},
+    "packageManager": "pnpm@10.8.1+sha512.c50088ba998c67b8ca8c99df8a5e02fd2ae2e2b29aaf238feaa9e124248d3f48f9fb6db2424949ff901cffbb5e0f0cc1ad6aedb602cd29450751d11c35023677"
 }

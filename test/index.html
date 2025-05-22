@@ -1,632 +1,777 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portex SDK Test Page</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        .container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        h1 {
-            color: #333;
-            margin-bottom: 20px;
-        }
-        .section {
-            margin-bottom: 30px;
-            padding: 20px;
-            border: 1px solid #eee;
-            border-radius: 4px;
-        }
-        .section h2 {
-            color: #666;
-            margin-top: 0;
-            margin-bottom: 15px;
-        }
-        .button-group {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        button {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            background-color: #007bff;
-            color: white;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        button:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-        }
-        .result {
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 4px;
-            white-space: pre-wrap;
-            font-family: monospace;
-        }
-        .error {
-            color: #dc3545;
-            padding: 10px;
-            background-color: #f8d7da;
-            border-radius: 4px;
-            margin-top: 10px;
-        }
-        .success {
-            color: #28a745;
-            padding: 10px;
-            background-color: #d4edda;
-            border-radius: 4px;
-            margin-top: 10px;
-            word-break: break-all;
-        }
-        .input-group {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-            align-items: center;
-        }
-        .input-group label {
-            min-width: 80px;
-        }
-        .input-group input {
-            flex: 1;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-        .input-group label.required::after {
-            content: '*';
-            color: #dc3545;
-            margin-left: 4px;
-        }
-        .input-group input:invalid {
-            border-color: #dc3545;
-        }
-        .input-group input:invalid:focus {
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.25);
-        }
-        .advanced-params {
-            display: none;
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: 1px solid #eee;
-        }
-        .advanced-params.show {
-            display: block;
-        }
-        .toggle-advanced {
-            background: none;
-            border: none;
-            color: #007bff;
-            cursor: pointer;
-            padding: 0;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            margin-bottom: 10px;
-        }
-        .toggle-advanced:hover {
-            color: #ffffff;
-        }
-        .toggle-advanced::after {
-            content: '▼';
-            font-size: 12px;
-            transition: transform 0.2s;
-        }
-        .toggle-advanced.collapsed::after {
-            transform: rotate(-90deg);
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Portex SDK Test Page</h1>
-        
-        <div class="section">
-            <h2>Initialization</h2>
-            <div class="input-group">
-                <label for="appId">App ID:</label>
-                <input type="text" id="appId" placeholder="Enter App ID" value="2vGFsSt4dNmbYItGIcbKUwstRdY">
-            </div>
-            <div class="button-group">
-                <button id="initBtn">Initialize SDK</button>
-                <button id="checkVerifiedBtn" disabled>Check Verification</button>
-            </div>
-            <div id="initResult" class="result"></div>
-        </div>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Portex SDK Test Page</title>
+		<style>
+			body {
+				font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+				max-width: 800px;
+				margin: 0 auto;
+				padding: 20px;
+				background-color: #f5f5f5;
+			}
+			.container {
+				background-color: white;
+				padding: 20px;
+				border-radius: 8px;
+				box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+			}
+			h1 {
+				color: #333;
+				margin-bottom: 20px;
+			}
+			.section {
+				margin-bottom: 30px;
+				padding: 20px;
+				border: 1px solid #eee;
+				border-radius: 4px;
+			}
+			.section h2 {
+				color: #666;
+				margin-top: 0;
+				margin-bottom: 15px;
+			}
+			.button-group {
+				display: flex;
+				gap: 10px;
+				margin-bottom: 15px;
+			}
+			button {
+				padding: 8px 16px;
+				border: none;
+				border-radius: 4px;
+				background-color: #007bff;
+				color: white;
+				cursor: pointer;
+				transition: background-color 0.2s;
+			}
+			button:hover {
+				background-color: #0056b3;
+			}
+			button:disabled {
+				background-color: #ccc;
+				cursor: not-allowed;
+			}
+			.result {
+				padding: 15px;
+				background-color: #f8f9fa;
+				border-radius: 4px;
+				white-space: pre-wrap;
+				font-family: monospace;
+			}
+			.error {
+				color: #dc3545;
+				padding: 10px;
+				background-color: #f8d7da;
+				border-radius: 4px;
+				margin-top: 10px;
+			}
+			.success {
+				color: #28a745;
+				padding: 10px;
+				background-color: #d4edda;
+				border-radius: 4px;
+				margin-top: 10px;
+				word-break: break-all;
+			}
+			.input-group {
+				display: flex;
+				gap: 10px;
+				margin-bottom: 15px;
+				align-items: center;
+			}
+			.input-group label {
+				min-width: 80px;
+			}
+			.input-group input {
+				flex: 1;
+				padding: 8px;
+				border: 1px solid #ddd;
+				border-radius: 4px;
+				font-size: 14px;
+			}
+			.input-group label.required::after {
+				content: '*';
+				color: #dc3545;
+				margin-left: 4px;
+			}
+			.input-group input:invalid {
+				border-color: #dc3545;
+			}
+			.input-group input:invalid:focus {
+				outline: none;
+				box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.25);
+			}
+			.advanced-params {
+				display: none;
+				margin-top: 10px;
+				padding-top: 10px;
+				border-top: 1px solid #eee;
+			}
+			.advanced-params.show {
+				display: block;
+			}
+			.toggle-advanced {
+				background: none;
+				border: none;
+				color: #007bff;
+				cursor: pointer;
+				padding: 0;
+				font-size: 14px;
+				display: flex;
+				align-items: center;
+				gap: 5px;
+				margin-bottom: 10px;
+			}
+			.toggle-advanced:hover {
+				color: #ffffff;
+			}
+			.toggle-advanced::after {
+				content: '▼';
+				font-size: 12px;
+				transition: transform 0.2s;
+			}
+			.toggle-advanced.collapsed::after {
+				transform: rotate(-90deg);
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<h1>Portex SDK Test Page</h1>
 
-        <div class="section">
-            <h2>Social Features</h2>
-            <div class="input-group">
-                <label for="inviteText">Invite Text:</label>
-                <input type="text" id="inviteText" placeholder="Enter invite text" value="Hi, share a game with you.">
-            </div>
-            <div class="input-group">
-                <label for="startParam">Start Param:</label>
-                <input type="text" id="startParam" placeholder="Enter start param" value="">
-            </div>
-            <div class="input-group">
-                <label for="invitePayload">Invite Payload:</label>
-                <input type="text" id="invitePayload" placeholder="Enter invite payload" value="">
-            </div>
-            <div class="input-group">
-                <label for="inviteSuffix">Invite Url Suffix:</label>
-                <input type="text" id="inviteSuffix" placeholder="Enter invite url suffix" value="">
-            </div>
-            <div class="button-group">
-                <button id="inviteBtn" disabled>Invite Friend</button>
-                <button id="getInviteUrlBtn" disabled>Get Invite URL</button>
-            </div>
-            <div class="input-group">
-                <label for="payloadKey">Payload Key:</label>
-                <input type="text" id="payloadKey" placeholder="Enter payload key to query">
-            </div>
-            <div class="button-group">
+			<div class="section">
+				<h2>Initialization</h2>
+				<div class="input-group">
+					<label for="appId">App ID:</label>
+					<input type="text" id="appId" placeholder="Enter App ID" value="2vGFsSt4dNmbYItGIcbKUwstRdY" />
+				</div>
+				<div class="button-group">
+					<button id="initBtn">Initialize SDK</button>
+					<button id="checkVerifiedBtn" disabled>Check Verification</button>
+				</div>
+				<div id="initResult" class="result"></div>
+			</div>
 
-                <button id="getStartParamBtn" disabled>Get Start Param</button>
-                <button id="queryInviteBtn" disabled>Query Invite Payload</button>
-            </div>
-            <div id="inviteResult" class="result"></div>
-        </div>
+			<div class="section">
+				<h2>Social Features</h2>
+				<div class="input-group">
+					<label for="inviteText">Invite Text:</label>
+					<input type="text" id="inviteText" placeholder="Enter invite text" value="Hi, share a game with you." />
+				</div>
+				<div class="input-group">
+					<label for="startParam">Start Param:</label>
+					<input type="text" id="startParam" placeholder="Enter start param" value="" />
+				</div>
+				<div class="input-group">
+					<label for="invitePayload">Invite Payload:</label>
+					<input type="text" id="invitePayload" placeholder="Enter invite payload" value="" />
+				</div>
+				<div class="input-group">
+					<label for="inviteSuffix">Invite Url Suffix:</label>
+					<input type="text" id="inviteSuffix" placeholder="Enter invite url suffix" value="" />
+				</div>
+				<div class="button-group">
+					<button id="inviteBtn" disabled>Invite Friend</button>
+					<button id="getInviteUrlBtn" disabled>Get Invite URL</button>
+				</div>
+				<div class="input-group">
+					<label for="payloadKey">Payload Key:</label>
+					<input type="text" id="payloadKey" placeholder="Enter payload key to query" />
+				</div>
+				<div class="button-group">
+					<button id="getStartParamBtn" disabled>Get Start Param</button>
+					<button id="queryInviteBtn" disabled>Query Invite Payload</button>
+				</div>
+				<div id="inviteResult" class="result"></div>
+			</div>
 
-        <div class="section">
-            <h2>Payment Features</h2>
-            <div class="input-group">
-                <label for="tgUserId" class="required">TG ID:</label>
-                <input type="text" id="tgUserId" placeholder="Enter TG User ID" value="" required>
-            </div>
-            <div class="input-group">
-                <label for="title" class="required">Title:</label>
-                <input type="text" id="title" placeholder="Enter title" value="Book" required>
-            </div>
-            <div class="input-group">
-                <label for="description" class="required">Description:</label>
-                <input type="text" id="description" placeholder="Enter description" value="Good Book" required>
-            </div>
-            <div class="input-group">
-                <label for="label" class="required">Label:</label>
-                <input type="text" id="label" placeholder="Enter label" value="Items" required>
-            </div>
-            <div class="input-group">
-                <label for="amount" class="required">Amount:</label>
-                <input type="number" id="amount" placeholder="Enter amount" value="1" min="1" required>
-            </div>
-            <div class="input-group">
-                <label for="payload">Payload:</label>
-                <input type="text" id="payload" placeholder="Enter payload" value="a=1&b=2">
-            </div>
-            <button class="toggle-advanced collapsed">Advanced</button>
-            <div class="advanced-params">
-                <div class="input-group">
-                    <label for="photoUrl">Photo URL:</label>
-                    <input type="text" id="photoUrl" placeholder="Enter photo URL" value="https://sdk.portex.app/assets/book.png">
-                </div>
-                <div class="input-group">
-                    <label for="callbackUrl">Callback URL:</label>
-                    <input type="text" id="callbackUrl" placeholder="Enter callback URL" value="">
-                </div>
-            </div>
-            <div class="button-group">
-                <button id="payBtn" disabled>Make Payment</button>
-                <button id="resumePaymentBtn" disabled>Resume Payment</button>
-            </div>
-            <div class="input-group">
-                <label for="orderId">Order ID:</label>
-                <input type="text" id="orderId" placeholder="Enter order ID" value="test-order-id">
-            </div>
-            <div class="button-group">
-                <button id="queryOrderBtn" disabled>Query Order</button>
-            </div>
-            <div id="paymentResult" class="result"></div>
-        </div>
+			<div class="section">
+				<h2>Payment Features</h2>
+				<div class="input-group">
+					<label for="tgUserId" class="required">TG ID:</label>
+					<input type="text" id="tgUserId" placeholder="Enter TG User ID" value="" required />
+				</div>
+				<div class="input-group">
+					<label for="title" class="required">Title:</label>
+					<input type="text" id="title" placeholder="Enter title" value="Book" required />
+				</div>
+				<div class="input-group">
+					<label for="description" class="required">Description:</label>
+					<input type="text" id="description" placeholder="Enter description" value="Good Book" required />
+				</div>
+				<div class="input-group">
+					<label for="label" class="required">Label:</label>
+					<input type="text" id="label" placeholder="Enter label" value="Items" required />
+				</div>
+				<div class="input-group">
+					<label for="amount" class="required">Amount:</label>
+					<input type="number" id="amount" placeholder="Enter amount" value="1" min="1" required />
+				</div>
+				<div class="input-group">
+					<label for="payload">Payload:</label>
+					<input type="text" id="payload" placeholder="Enter payload" value="a=1&b=2" />
+				</div>
+				<button class="toggle-advanced collapsed">Advanced</button>
+				<div class="advanced-params">
+					<div class="input-group">
+						<label for="photoUrl">Photo URL:</label>
+						<input type="text" id="photoUrl" placeholder="Enter photo URL" value="https://sdk.portex.app/assets/book.png" />
+					</div>
+					<div class="input-group">
+						<label for="callbackUrl">Callback URL:</label>
+						<input type="text" id="callbackUrl" placeholder="Enter callback URL" value="" />
+					</div>
+				</div>
+				<div class="button-group">
+					<button id="payBtn" disabled>Make Payment</button>
+					<button id="resumePaymentBtn" disabled>Resume Payment</button>
+				</div>
+				<div class="input-group">
+					<label for="orderId">Order ID:</label>
+					<input type="text" id="orderId" placeholder="Enter order ID" value="test-order-id" />
+				</div>
+				<div class="button-group">
+					<button id="queryOrderBtn" disabled>Query Order</button>
+				</div>
+				<div id="paymentResult" class="result"></div>
+			</div>
 
-        <div class="section">
-            <h2>Report Features</h2>
-            <div class="input-group" style="flex-direction: column; align-items: flex-start;">
-                <label for="userSetData" class="required" style="display: block;">Report User Set(JSON):</label>
-                <textarea id="userSetData" rows="5" cols="40" placeholder="Enter Report User Set(JSON)" value="" required>{}</textarea>
-            </div>
-            <div class="button-group">
-                <button id="reportUserSet">Report User Set</button>
-            </div>
-            <div id="userSetResult" class="result" style="margin-bottom: 20px"></div>
-            <div class="input-group" style="flex-direction: column; align-items: flex-start;">
-                <label for="eventName" class="required">Event Name:</label>
-                <input type="text" id="eventName" placeholder="Enter Event Name" value="" required>
-            </div>
-            <div class="input-group" style="flex-direction: column; align-items: flex-start;">
-                <label for="trackData" class="required">Report Track(JSON):</label>
-                <textarea id="trackData" rows="5" cols="40" placeholder="Enter Report Track(JSON)" value="" required>{}</textarea>
-            </div>    
-            <div class="button-group">
-                <button id="reportTrack">Report Track</button>
-            </div>
-            <div id="trackResult" class="result"></div>
-        </div>
+			<div class="section">
+				<h2>Report Features</h2>
+				<div class="input-group" style="flex-direction: column; align-items: flex-start">
+					<label for="userSetData" class="required" style="display: block">Report User Set(JSON):</label>
+					<textarea id="userSetData" rows="5" cols="40" placeholder="Enter Report User Set(JSON)" value="" required>{}</textarea>
+				</div>
+				<div class="button-group">
+					<button id="reportUserSet">Report User Set</button>
+				</div>
+				<div id="userSetResult" class="result" style="margin-bottom: 20px"></div>
+				<div class="input-group" style="flex-direction: column; align-items: flex-start">
+					<label for="eventName" class="required">Event Name:</label>
+					<input type="text" id="eventName" placeholder="Enter Event Name" value="" required />
+				</div>
+				<div class="input-group" style="flex-direction: column; align-items: flex-start">
+					<label for="trackData" class="required">Report Track(JSON):</label>
+					<textarea id="trackData" rows="5" cols="40" placeholder="Enter Report Track(JSON)" value="" required>{}</textarea>
+				</div>
+				<div class="button-group">
+					<button id="reportTrack">Report Track</button>
+				</div>
+				<div id="trackResult" class="result"></div>
+			</div>
 
-        <div class="section">
-            <h2>game record Features</h2>
-            <div class="input-group">
-                <label for="gameRecordName" class="required">Game Record Name:</label>
-                <input type="text" id="gameRecordName" placeholder="Enter Game Record Name" value="" required>
-            </div>
-            <div class="input-group">
-                <label for="gameRecordData" class="required">Game Record Data:</label>
-                <input type="text" id="gameRecordData" placeholder="Enter Game Record Base64 Data" value="" required>
-            </div>
-            <div class="button-group">
-                <button id="saveGameRecordBtn">Save Game Record</button>
-                <button id="getGameRecordBtn">Get Game Record</button>
-            </div>
-            <div id="gameRecordResult" class="result"></div>
-        </div>
-    </div>
+			<div class="section">
+				<h2>game record Features</h2>
+				<div class="input-group">
+					<label for="gameRecordName" class="required">Game Record Name:</label>
+					<input type="text" id="gameRecordName" placeholder="Enter Game Record Name" value="" required />
+				</div>
+				<div class="input-group">
+					<label for="gameRecordData" class="required">Game Record Data:</label>
+					<input type="text" id="gameRecordData" placeholder="Enter Game Record Base64 Data" value="" required />
+				</div>
+				<div class="button-group">
+					<button id="saveGameRecordBtn">Save Game Record</button>
+					<button id="getGameRecordBtn">Get Game Record</button>
+				</div>
+				<div id="gameRecordResult" class="result"></div>
+			</div>
 
-    <script src="../dist/portex-sdk.js"></script>
-    <script>
-        let sdk = null;
+			<div class="section">
+				<h2>Leaderboard Features</h2>
+				<div class="input-group">
+					<label for="leaderboardName">Leaderboard Name:</label>
+					<input type="text" id="leaderboardName" placeholder="Enter leaderboard name" value="test-leaderboard-name" />
+				</div>
+				<div class="input-group">
+					<label for="score">Score:</label>
+					<input type="number" id="score" placeholder="Enter score" value="100" />
+				</div>
+				<div class="input-group">
+					<label for="direction">Direction:</label>
+					<select id="direction">
+						<option value="0" selected>Ascending</option>
+						<option value="1">Descending</option>
+					</select>
+				</div>
+				<div class="button-group">
+					<button id="updateUserLeaderboardScoreBtn" disabled>Update User Leaderboard Score</button>
+				</div>
+				<div id="updateUserLeaderboardScoreResult" style="margin-bottom: 20px" class="result"></div>
+				<div class="input-group">
+					<label for="topN">Top N:</label>
+					<input type="number" id="topN" placeholder="Enter top N" value="10" />
+				</div>
+				<div class="button-group">
+					<button id="getLeaderboardTopNBtn" disabled>Get Leaderboard Top N</button>
+					<button id="getLeaderboardRankBtn" disabled>Get Leaderboard Rank</button>
+				</div>
+				<div id="leaderboardResult" class="result"></div>
+			</div>
+		</div>
 
-        // 模拟Telegram Web App环境
-        // window.Telegram = {
-        //     WebApp: {
-        //         initData: 'query_id=AAFaOIMjAwAAAFo4gyPngAFW&user=%7B%22id%22%3A7038253146%2C%22first_name%22%3A%22Jason%22%2C%22last_name%22%3A%22%22%2C%22username%22%3A%22JasonChen82%22%2C%22language_code%22%3A%22zh-hans%22%2C%22allows_write_to_pm%22%3Atrue%2C%22photo_url%22%3A%22https%3A%5C%2F%5C%2Ft.me%5C%2Fi%5C%2Fuserpic%5C%2F320%5C%2FgSHQO0dTQnqeTIA_kDyOtMKU1e2txlGNvE1tVreUe1u1zCBOv3eHrF6xd9ep5Tap.svg%22%7D&auth_date=1742895773&signature=FF9bzsQZKwahHjEf1RKT3ghRvLALYL10y-H5Ip1HXpHtcV-ERVY4jiTatCxI41NpJhngUiPhXtOg86NbnKQTAQ&hash=b22008401a8797d0df62b315a5550d5d849c5ea0158f8b7ac6c9aed24f64ed75',
-        //         initDataUnsafe: {
-        //             user: {
-        //                 id: 7038253146,
-        //                 first_name: 'Jason',
-        //                 username: 'JasonChen82'
-        //             },
-        //             auth_date: Date.now(),
-        //             hash: 'b22008401a8797d0df62b315a5550d5d849c5ea0158f8b7ac6c9aed24f64ed75'
-        //         }
-        //     }
-        // };
+		<script src="../dist/portex-sdk.js"></script>
+		<script>
+			let sdk = null
 
-        // Initialize buttons
-        const appIdInput = document.getElementById('appId');
-        const initBtn = document.getElementById('initBtn');
-        const checkVerifiedBtn = document.getElementById('checkVerifiedBtn');
-        const inviteBtn = document.getElementById('inviteBtn');
-        const startParamInput = document.getElementById('startParam');
-        const getInviteUrlBtn = document.getElementById('getInviteUrlBtn');
-        const getStartParamBtn = document.getElementById('getStartParamBtn');
-        const payBtn = document.getElementById('payBtn');
-        const queryOrderBtn = document.getElementById('queryOrderBtn');
-        const invitePayloadInput = document.getElementById('invitePayload');
-        const payloadKeyInput = document.getElementById('payloadKey');
-        const queryInviteBtn = document.getElementById('queryInviteBtn');
-        const inviteSuffixInput = document.getElementById('inviteSuffix');
-        const inviteTextInput = document.getElementById('inviteText');
-        const toggleAdvancedBtn = document.querySelector('.toggle-advanced');
-        const advancedParams = document.querySelector('.advanced-params');
-        const reportUserSetBtn = document.getElementById('reportUserSet');
-        const reportTrackBtn = document.getElementById('reportTrack');
-        const saveGameRecordBtn = document.getElementById('saveGameRecordBtn');
-        const getGameRecordBtn = document.getElementById('getGameRecordBtn');
+			// // 模拟Telegram Web App环境
+			// window.Telegram = {
+			// 	WebApp: {
+			// 		initData:
+			// 			'query_id=AAHkJG54AgAAAOQkbniWmhbZ&user=%7B%22id%22%3A6315451620%2C%22first_name%22%3A%22Nocturner%22%2C%22last_name%22%3A%22%22%2C%22username%22%3A%22Noveiros%22%2C%22language_code%22%3A%22zh-hans%22%2C%22allows_write_to_pm%22%3Atrue%2C%22photo_url%22%3A%22https%3A%5C%2F%5C%2Ft.me%5C%2Fi%5C%2Fuserpic%5C%2F320%5C%2Fc7_pILfuGvLY-k4trSaBxER9Q5YX7P5e6PpDVa65HmFqZ9joQlrxWjeZUUA88MiD.svg%22%7D&auth_date=1747914444&signature=91V0ytKRyRk-RXyT0x40rE05t1PuyKcwPUNPfLfTh1I_1ajAFVz-BwRPCvG2uxU-L9vEHl2CfXV1cOJsMqbNAw&hash=b1306489608090cbf5d2580d7eabf282567aaac88350211c347fca6ff4f52491',
+			// 		initDataUnsafe: {
+			// 			user: {
+			// 				id: 6315451620,
+			// 				first_name: 'Nocturner',
+			// 				username: 'Noveiros',
+			// 			},
+			// 			auth_date: Date.now(),
+			// 			hash: 'b1306489608090cbf5d2580d7eabf282567aaac88350211c347fca6ff4f52491',
+			// 		},
+			// 	},
+			// }
 
-        // Payment inputs
-        const amountInput = document.getElementById('amount');
-        const callbackUrlInput = document.getElementById('callbackUrl');
-        const descriptionInput = document.getElementById('description');
-        const labelInput = document.getElementById('label');
-        const payloadInput = document.getElementById('payload');
-        const photoUrlInput = document.getElementById('photoUrl');
-        const tgUserIdInput = document.getElementById('tgUserId');
-        const titleInput = document.getElementById('title');
-        const orderIdInput = document.getElementById('orderId');
+			// Initialize buttons
+			const appIdInput = document.getElementById('appId')
+			const initBtn = document.getElementById('initBtn')
+			const checkVerifiedBtn = document.getElementById('checkVerifiedBtn')
+			const inviteBtn = document.getElementById('inviteBtn')
+			const startParamInput = document.getElementById('startParam')
+			const getInviteUrlBtn = document.getElementById('getInviteUrlBtn')
+			const getStartParamBtn = document.getElementById('getStartParamBtn')
+			const payBtn = document.getElementById('payBtn')
+			const queryOrderBtn = document.getElementById('queryOrderBtn')
+			const invitePayloadInput = document.getElementById('invitePayload')
+			const payloadKeyInput = document.getElementById('payloadKey')
+			const queryInviteBtn = document.getElementById('queryInviteBtn')
+			const inviteSuffixInput = document.getElementById('inviteSuffix')
+			const inviteTextInput = document.getElementById('inviteText')
+			const toggleAdvancedBtn = document.querySelector('.toggle-advanced')
+			const advancedParams = document.querySelector('.advanced-params')
+			const reportUserSetBtn = document.getElementById('reportUserSet')
+			const reportTrackBtn = document.getElementById('reportTrack')
+			const saveGameRecordBtn = document.getElementById('saveGameRecordBtn')
+			const getGameRecordBtn = document.getElementById('getGameRecordBtn')
+			const getLeaderboardTopNBtn = document.getElementById('getLeaderboardTopNBtn')
+			const getLeaderboardRankBtn = document.getElementById('getLeaderboardRankBtn')
+			const updateUserLeaderboardScoreBtn = document.getElementById('updateUserLeaderboardScoreBtn')
 
-        // Result display areas
-        const initResult = document.getElementById('initResult');
-        const inviteResult = document.getElementById('inviteResult');
-        const paymentResult = document.getElementById('paymentResult');
+			// Payment inputs
+			const amountInput = document.getElementById('amount')
+			const callbackUrlInput = document.getElementById('callbackUrl')
+			const descriptionInput = document.getElementById('description')
+			const labelInput = document.getElementById('label')
+			const payloadInput = document.getElementById('payload')
+			const photoUrlInput = document.getElementById('photoUrl')
+			const tgUserIdInput = document.getElementById('tgUserId')
+			const titleInput = document.getElementById('title')
+			const orderIdInput = document.getElementById('orderId')
 
-        // Report inputs
-        const userSetInput = document.getElementById('userSetData');
-        const eventNameInput = document.getElementById('eventName');
-        const trackInput = document.getElementById('trackData');
-        
-        // Game record inputs
-        const gameRecordNameInput = document.getElementById('gameRecordName');
-        const gameRecordInput = document.getElementById('gameRecordData');
+			// Report inputs
+			const userSetInput = document.getElementById('userSetData')
+			const eventNameInput = document.getElementById('eventName')
+			const trackInput = document.getElementById('trackData')
 
+			// Game record inputs
+			const gameRecordNameInput = document.getElementById('gameRecordName')
+			const gameRecordInput = document.getElementById('gameRecordData')
 
-        // Toggle advanced parameters
-        toggleAdvancedBtn.addEventListener('click', () => {
-            advancedParams.classList.toggle('show');
-            toggleAdvancedBtn.classList.toggle('collapsed');
-        });
+			// Leaderboard inputs
+			const leaderboardNameInput = document.getElementById('leaderboardName')
+			const scoreInput = document.getElementById('score')
+			const directionInput = document.getElementById('direction')
+			const topNInput = document.getElementById('topN')
 
-        // Show result
-        function showResult(element, data, isError = false) {
-            element.innerHTML = `<div class="${isError ? 'error' : 'success'}">${JSON.stringify(data, null, 2)}</div>`;
-        }
+			// Result display areas
+			const initResult = document.getElementById('initResult')
+			const inviteResult = document.getElementById('inviteResult')
+			const paymentResult = document.getElementById('paymentResult')
+			const leaderboardResult = document.getElementById('leaderboardResult')
+			const updateUserLeaderboardScoreResult = document.getElementById('updateUserLeaderboardScoreResult')
 
-        // Initialize SDK
-        initBtn.addEventListener('click', async () => {
-            try {
-                const appId = appIdInput.value.trim();
-                if (!appId) {
-                    showResult(initResult, 'Please enter App ID', true);
-                    return;
-                }
+			// Toggle advanced parameters
+			toggleAdvancedBtn.addEventListener('click', () => {
+				advancedParams.classList.toggle('show')
+				toggleAdvancedBtn.classList.toggle('collapsed')
+			})
 
-                sdk = new Portex({
-                    appId: appId,
-                    environment: 'dev'
-                });
+			// Show result
+			function showResult(element, data, isError = false) {
+				element.innerHTML = `<div class="${isError ? 'error' : 'success'}">${JSON.stringify(data, null, 2)}</div>`
+			}
 
-                const result = await sdk.init();
-                
-                if (result.status === 'ok') {
-                    showResult(initResult, result);
-                    checkVerifiedBtn.disabled = false;
-                    inviteBtn.disabled = false;
-                    getInviteUrlBtn.disabled = false;
-                    payBtn.disabled = false;
-                    queryOrderBtn.disabled = false;
-                    queryInviteBtn.disabled = false;
-                    getStartParamBtn.disabled = false;
-                    sdk.webApp.expand();
-                    tgUserIdInput.value = sdk.webApp.initDataUnsafe.user.id;
+			// Initialize SDK
+			initBtn.addEventListener('click', async () => {
+				try {
+					const appId = appIdInput.value.trim()
+					if (!appId) {
+						showResult(initResult, 'Please enter App ID', true)
+						return
+					}
 
-                    if (sdk.hasPendingPayment()) {
-                        resumePaymentBtn.disabled = false;
-                    }
-                }else{
-                    showResult(initResult, result, true);
-                }
-            } catch (error) {
-                showResult(initResult, error.message, true);
-            }
-        });
+					sdk = new Portex({
+						appId: appId,
+					})
 
-        // Check verification status
-        checkVerifiedBtn.addEventListener('click', () => {
-            if (!sdk) {
-                showResult(initResult, 'SDK not initialized', true);
-                return;
-            }
-            const status = sdk.isVerified;
-            showResult(initResult, { status, initData: sdk.webApp.initDataUnsafe });
-        });
+					const result = await sdk.init()
 
-        // Invite friend
-        inviteBtn.addEventListener('click', async () => {
-            if (!sdk) {
-                showResult(inviteResult, 'SDK not initialized', true);
-                return;
-            }
-            try {
-                const result = await sdk.invite({
-                    expire: 30,
-                    text: inviteTextInput.value.trim(),
-                    suffix: inviteSuffixInput.value.trim(),
-                    payload: invitePayloadInput.value.trim(),
-                    start_param: startParamInput.value.trim()
-                });
-                showResult(inviteResult, result);
-                if (result.key) {
-                    payloadKeyInput.value = result.key;
-                }
-            } catch (error) {
-                showResult(inviteResult, error.message, true);
-            }
-        });
+					if (result.status === 'ok') {
+						showResult(initResult, result)
+						checkVerifiedBtn.disabled = false
+						inviteBtn.disabled = false
+						getInviteUrlBtn.disabled = false
+						payBtn.disabled = false
+						queryOrderBtn.disabled = false
+						queryInviteBtn.disabled = false
+						getStartParamBtn.disabled = false
+						updateUserLeaderboardScoreBtn.disabled = false
+						getLeaderboardRankBtn.disabled = false
+						getLeaderboardTopNBtn.disabled = false
+						sdk.webApp.expand?.()
+						tgUserIdInput.value = sdk.webApp.initDataUnsafe.user.id
 
-        getInviteUrlBtn.addEventListener('click', async () => {
-            if (!sdk) {
-                showResult(inviteResult, 'SDK not initialized', true);
-                return;
-            }
-            try {
-                const result = await sdk.getInviteUrl({
-                    expire: 30,
-                    text: inviteTextInput.value.trim(),
-                    suffix: inviteSuffixInput.value.trim(),
-                    payload: invitePayloadInput.value.trim(),
-                    start_param: startParamInput.value.trim()
-                });
-                showResult(inviteResult, result);
-                if (result.key) {
-                    payloadKeyInput.value = result.key;
-                }
-            } catch (error) {
-                showResult(inviteResult, error.message, true);
-            }
-        });
+						if (sdk.hasPendingPayment()) {
+							resumePaymentBtn.disabled = false
+						}
+					} else {
+						showResult(initResult, result, true)
+					}
+				} catch (error) {
+					showResult(initResult, error.message, true)
+				}
+			})
 
-        // Make payment
-        payBtn.addEventListener('click', async () => {
-            if (!sdk) {
-                showResult(paymentResult, 'SDK not initialized', true);
-                return;
-            }
-            try {
-                // 验证必要参数
-                const requiredFields = {
-                    tg_use_id: tgUserIdInput.value.trim(),
-                    amount: Number(amountInput.value),
-                    label: labelInput.value.trim(),
-                    title: titleInput.value.trim(),
-                    description: descriptionInput.value.trim()
-                };
+			// Check verification status
+			checkVerifiedBtn.addEventListener('click', () => {
+				if (!sdk) {
+					showResult(initResult, 'SDK not initialized', true)
+					return
+				}
+				const status = sdk.isVerified
+				showResult(initResult, { status, initData: sdk.webApp.initDataUnsafe })
+			})
 
-                // 检查是否有空值
-                const emptyFields = Object.entries(requiredFields)
-                    .filter(([_, value]) => !value)
-                    .map(([key]) => key.replace(/_/g, ' '));
+			// Invite friend
+			inviteBtn.addEventListener('click', async () => {
+				if (!sdk) {
+					showResult(inviteResult, 'SDK not initialized', true)
+					return
+				}
+				try {
+					const result = await sdk.invite({
+						expire: 30,
+						text: inviteTextInput.value.trim(),
+						suffix: inviteSuffixInput.value.trim(),
+						payload: invitePayloadInput.value.trim(),
+						start_param: startParamInput.value.trim(),
+					})
+					showResult(inviteResult, result)
+					if (result.key) {
+						payloadKeyInput.value = result.key
+					}
+				} catch (error) {
+					showResult(inviteResult, error.message, true)
+				}
+			})
 
-                if (emptyFields.length > 0) {
-                    showResult(paymentResult, `Required fields cannot be empty: ${emptyFields.join(', ')}`, true);
-                    return;
-                }
+			getInviteUrlBtn.addEventListener('click', async () => {
+				if (!sdk) {
+					showResult(inviteResult, 'SDK not initialized', true)
+					return
+				}
+				try {
+					const result = await sdk.getInviteUrl({
+						expire: 30,
+						text: inviteTextInput.value.trim(),
+						suffix: inviteSuffixInput.value.trim(),
+						payload: invitePayloadInput.value.trim(),
+						start_param: startParamInput.value.trim(),
+					})
+					showResult(inviteResult, result)
+					if (result.key) {
+						payloadKeyInput.value = result.key
+					}
+				} catch (error) {
+					showResult(inviteResult, error.message, true)
+				}
+			})
 
-                const result = await sdk.pay({
-                    ...requiredFields,
-                    callback_url: callbackUrlInput.value.trim(),
-                    payload: payloadInput.value.trim(),
-                    photo_url: photoUrlInput.value.trim()
-                },(result) => {
-                    if (sdk.hasPendingPayment()) {
-                        resumePaymentBtn.disabled = false;
-                    }else{
-                        resumePaymentBtn.disabled = true;
-                    }
-                    showResult(paymentResult, result);
-                });
-                showResult(paymentResult, result);
-                orderIdInput.value = result.tg_payment_id;
-            } catch (error) {
-                showResult(paymentResult, error.message, true);
-            }
-        });
+			// Make payment
+			payBtn.addEventListener('click', async () => {
+				if (!sdk) {
+					showResult(paymentResult, 'SDK not initialized', true)
+					return
+				}
+				try {
+					// 验证必要参数
+					const requiredFields = {
+						tg_use_id: tgUserIdInput.value.trim(),
+						amount: Number(amountInput.value),
+						label: labelInput.value.trim(),
+						title: titleInput.value.trim(),
+						description: descriptionInput.value.trim(),
+					}
 
-        // Resume payment
-        resumePaymentBtn.addEventListener('click', async () => {
-            if (!sdk) {
-                showResult(paymentResult, 'SDK not initialized', true);
-                return;
-            }
-            try {
-                const result = await sdk.resumePayment((result) => {
-                    if (sdk.hasPendingPayment()) {
-                        resumePaymentBtn.disabled = false;
-                    }else{
-                        resumePaymentBtn.disabled = true;
-                    }
-                    showResult(paymentResult, result);
-                });
-                showResult(paymentResult, result);
-                orderIdInput.value = result.tg_payment_id;
-            } catch (error) {
-                showResult(paymentResult, error.message, true);
-            }
-        });
-        // Query order
-        queryOrderBtn.addEventListener('click', async () => {
-            if (!sdk) {
-                showResult(paymentResult, 'SDK not initialized', true);
-                return;
-            }
-            try {
-                const result = await sdk.queryOrder(Number(orderIdInput.value.trim()));
-                showResult(paymentResult, result);
-            } catch (error) {
-                showResult(paymentResult, error.message, true);
-            }
-        });
+					// 检查是否有空值
+					const emptyFields = Object.entries(requiredFields)
+						.filter(([_, value]) => value === undefined || value === null || value === '')
+						.map(([key]) => key.replace(/_/g, ' '))
 
-        // Query invite
-        queryInviteBtn.addEventListener('click', async () => {
-            if (!sdk) {
-                showResult(inviteResult, 'SDK not initialized', true);
-                return;
-            }
-            try {
-                const key = payloadKeyInput.value.trim();
-                if (!key) {
-                    showResult(inviteResult, 'Please enter payload key to query', true);
-                    return;
-                }
-                const result = await sdk.getInvitePayload(key);
-                showResult(inviteResult, result);
-            } catch (error) {
-                showResult(inviteResult, error.message, true);
-            }
-        });
+					if (emptyFields.length > 0) {
+						showResult(paymentResult, `Required fields cannot be empty: ${emptyFields.join(', ')}`, true)
+						return
+					}
 
-        getStartParamBtn.addEventListener('click', async () => {
-            if (!sdk) {
-                showResult(inviteResult, 'SDK not initialized', true);
-                return;
-            }
-            try {
-                const result = sdk.getStartParam();
-                showResult(inviteResult, result);
-            } catch (error) {
-                showResult(inviteResult, error.message, true);
-            }
-        });
+					const result = await sdk.pay(
+						{
+							...requiredFields,
+							callback_url: callbackUrlInput.value.trim(),
+							payload: payloadInput.value.trim(),
+							photo_url: photoUrlInput.value.trim(),
+						},
+						(result) => {
+							if (sdk.hasPendingPayment()) {
+								resumePaymentBtn.disabled = false
+							} else {
+								resumePaymentBtn.disabled = true
+							}
+							showResult(paymentResult, result)
+						}
+					)
+					showResult(paymentResult, result)
+					orderIdInput.value = result.tg_payment_id
+				} catch (error) {
+					showResult(paymentResult, error.message, true)
+				}
+			})
 
-        // report
-        reportUserSetBtn.addEventListener('click', async () => {
-            if (!sdk) {
-                showResult(userSetResult, 'SDK not initialized', true);
-                return;
-            }
-            try {
-                const userSetData = JSON.parse(userSetInput.value.trim());
-                const result = await sdk.reportUserSet(userSetData);
-                showResult(userSetResult, result);
-            } catch (error) {
-                showResult(userSetResult, error.message, true);
-            }
-        });
+			// Resume payment
+			resumePaymentBtn.addEventListener('click', async () => {
+				if (!sdk) {
+					showResult(paymentResult, 'SDK not initialized', true)
+					return
+				}
+				try {
+					const result = await sdk.resumePayment((result) => {
+						if (sdk.hasPendingPayment()) {
+							resumePaymentBtn.disabled = false
+						} else {
+							resumePaymentBtn.disabled = true
+						}
+						showResult(paymentResult, result)
+					})
+					showResult(paymentResult, result)
+					orderIdInput.value = result.tg_payment_id
+				} catch (error) {
+					showResult(paymentResult, error.message, true)
+				}
+			})
+			// Query order
+			queryOrderBtn.addEventListener('click', async () => {
+				if (!sdk) {
+					showResult(paymentResult, 'SDK not initialized', true)
+					return
+				}
+				try {
+					const result = await sdk.queryOrder(Number(orderIdInput.value.trim()))
+					showResult(paymentResult, result)
+				} catch (error) {
+					showResult(paymentResult, error.message, true)
+				}
+			})
 
-        reportTrackBtn.addEventListener('click', async () => {
-            if (!sdk) {
-                showResult(trackResult, 'SDK not initialized', true);
-                return;
-            }
-            try {
-                const eventName = eventNameInput.value.trim();
-                const trackData = JSON.parse(trackInput.value.trim());
-                const result = await sdk.reportTrack(eventName, trackData);
-                showResult(trackResult, result);
-            } catch (error) {
-                showResult(trackResult, error.message, true);
-            }
-        });
+			// Query invite
+			queryInviteBtn.addEventListener('click', async () => {
+				if (!sdk) {
+					showResult(inviteResult, 'SDK not initialized', true)
+					return
+				}
+				try {
+					const key = payloadKeyInput.value.trim()
+					if (!key) {
+						showResult(inviteResult, 'Please enter payload key to query', true)
+						return
+					}
+					const result = await sdk.getInvitePayload(key)
+					showResult(inviteResult, result)
+				} catch (error) {
+					showResult(inviteResult, error.message, true)
+				}
+			})
 
-        saveGameRecordBtn.addEventListener('click', async () => {
-            if (!sdk) {
-                showResult(gameRecordResult, 'SDK not initialized', true);
-                return;
-            }
-            try {
-                const recordName = gameRecordNameInput.value.trim();
-                const record = gameRecordInput.value.trim();
-                const result = await sdk.saveGameRecord(recordName, record);
-                showResult(gameRecordResult, result);
-            } catch (error) {
-                showResult(gameRecordResult, error.message, true);
-            }
-        });
+			getStartParamBtn.addEventListener('click', async () => {
+				if (!sdk) {
+					showResult(inviteResult, 'SDK not initialized', true)
+					return
+				}
+				try {
+					const result = sdk.getStartParam()
+					showResult(inviteResult, result)
+				} catch (error) {
+					showResult(inviteResult, error.message, true)
+				}
+			})
 
-        getGameRecordBtn.addEventListener('click', async () => {
-            if (!sdk) {
-                showResult(gameRecordResult, 'SDK not initialized', true);
-                return;
-            }
-            try {
-                const recordName = gameRecordNameInput.value.trim();
-                const result = await sdk.getGameRecord(recordName);
-                showResult(gameRecordResult, result);
-            } catch (error) {
-                showResult(gameRecordResult, error.message, true);
-            }
-        });
-    </script>
-</body>
-</html> 
+			// report
+			reportUserSetBtn.addEventListener('click', async () => {
+				if (!sdk) {
+					showResult(userSetResult, 'SDK not initialized', true)
+					return
+				}
+				try {
+					const userSetData = JSON.parse(userSetInput.value.trim())
+					const result = await sdk.reportUserSet(userSetData)
+					showResult(userSetResult, result)
+				} catch (error) {
+					showResult(userSetResult, error.message, true)
+				}
+			})
 
+			reportTrackBtn.addEventListener('click', async () => {
+				if (!sdk) {
+					showResult(trackResult, 'SDK not initialized', true)
+					return
+				}
+				try {
+					const eventName = eventNameInput.value.trim()
+					const trackData = JSON.parse(trackInput.value.trim())
+					const result = await sdk.reportTrack(eventName, trackData)
+					showResult(trackResult, result)
+				} catch (error) {
+					showResult(trackResult, error.message, true)
+				}
+			})
+
+			saveGameRecordBtn.addEventListener('click', async () => {
+				if (!sdk) {
+					showResult(gameRecordResult, 'SDK not initialized', true)
+					return
+				}
+				try {
+					const recordName = gameRecordNameInput.value.trim()
+					const record = gameRecordInput.value.trim()
+					const result = await sdk.saveGameRecord(recordName, record)
+					showResult(gameRecordResult, result)
+				} catch (error) {
+					showResult(gameRecordResult, error.message, true)
+				}
+			})
+
+			getGameRecordBtn.addEventListener('click', async () => {
+				if (!sdk) {
+					showResult(gameRecordResult, 'SDK not initialized', true)
+					return
+				}
+				try {
+					const recordName = gameRecordNameInput.value.trim()
+					const result = await sdk.getGameRecord(recordName)
+					showResult(gameRecordResult, result)
+				} catch (error) {
+					showResult(gameRecordResult, error.message, true)
+				}
+			})
+
+			// Get leaderboard top N
+			getLeaderboardTopNBtn.addEventListener('click', async () => {
+				if (!sdk) {
+					showResult(leaderboardResult, 'SDK not initialized', true)
+					return
+				}
+				try {
+					// 验证必要参数
+					const requiredFields = {
+						leaderboard_name: leaderboardNameInput.value.trim(),
+						top_n: Number(topNInput.value),
+					}
+
+					// 检查是否有空值
+					const emptyFields = Object.entries(requiredFields)
+						.filter(([_, value]) => value === undefined || value === null || value === '')
+						.map(([key]) => key.replace(/_/g, ' '))
+
+					if (emptyFields.length > 0) {
+						showResult(updateUserLeaderboardScoreResult, `Required fields cannot be empty: ${emptyFields.join(', ')}`, true)
+						return
+					}
+
+					const result = await sdk.getLeaderboardTopN({
+						leaderboard_name: leaderboardNameInput.value.trim(),
+						top_n: Number(topNInput.value),
+					})
+					showResult(leaderboardResult, result)
+				} catch (error) {
+					showResult(leaderboardResult, error.message, true)
+				}
+			})
+
+			// Get leaderboard rank
+			getLeaderboardRankBtn.addEventListener('click', async () => {
+				if (!sdk) {
+					showResult(leaderboardResult, 'SDK not initialized', true)
+					return
+				}
+				try {
+					// 验证必要参数
+					const requiredFields = {
+						leaderboard_name: leaderboardNameInput.value.trim(),
+					}
+
+					// 检查是否有空值
+					const emptyFields = Object.entries(requiredFields)
+						.filter(([_, value]) => value === undefined || value === null || value === '')
+						.map(([key]) => key.replace(/_/g, ' '))
+
+					if (emptyFields.length > 0) {
+						showResult(updateUserLeaderboardScoreResult, `Required fields cannot be empty: ${emptyFields.join(', ')}`, true)
+						return
+					}
+					const result = await sdk.getLeaderboardRank({
+						leaderboard_name: leaderboardNameInput.value.trim(),
+					})
+					showResult(leaderboardResult, result)
+				} catch (error) {
+					showResult(leaderboardResult, error.message, true)
+				}
+			})
+
+			// Update user leaderboard score
+			updateUserLeaderboardScoreBtn.addEventListener('click', async () => {
+				if (!sdk) {
+					showResult(updateUserLeaderboardScoreResult, 'SDK not initialized', true)
+					return
+				}
+				try {
+					console.log('Direction value:', directionInput.value)
+					// 验证必要参数
+					const requiredFields = {
+						leaderboard_name: leaderboardNameInput.value.trim(),
+						score: Number(scoreInput.value),
+						direction: Number(directionInput.value),
+					}
+					console.log(requiredFields)
+					// 检查是否有空值
+					const emptyFields = Object.entries(requiredFields)
+						.filter(([_, value]) => value === undefined || value === null || value === '')
+						.map(([key]) => key.replace(/_/g, ' '))
+
+					if (emptyFields.length > 0) {
+						showResult(updateUserLeaderboardScoreResult, `Required fields cannot be empty: ${emptyFields.join(', ')}`, true)
+						return
+					}
+
+					const result = await sdk.updateUserLeaderboardScore({
+						leaderboard_name: leaderboardNameInput.value.trim(),
+						score: Number(scoreInput.value),
+						direction: Number(directionInput.value),
+					})
+					showResult(updateUserLeaderboardScoreResult, 'update success!')
+				} catch (error) {
+					showResult(updateUserLeaderboardScoreResult, error.message, true)
+				}
+			})
+		</script>
+	</body>
+</html>
