@@ -108,8 +108,8 @@ export class Portex {
         // If there is initData, add it to the request headers
         if (this.webApp?.initData) {
             defaultHeaders['X-Tg-InitData'] = this.webApp.initData;
-            defaultHeaders['X-Tg-WebAppPlatform'] = this.webApp.platform;
-            defaultHeaders['X-Tg-AppVersion'] = this.webApp.version;
+            defaultHeaders['X-Tg-Platform'] = this.webApp.platform || 'unknown';
+            defaultHeaders['X-Tg-Version'] = this.webApp.version || 'unknown';
         }
 
         // Handle GET request query string
