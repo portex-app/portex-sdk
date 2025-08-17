@@ -202,6 +202,8 @@ export interface LeaderboardUpdateUserScoreOptions {
     leaderboard_name: string,
     /** Score */
     score: number,
+    /** Extra */
+    extra?: string,
 }
 
 /**
@@ -224,7 +226,7 @@ export interface PortexResponseBody<T> {
 
 export interface PortexRequestOptions {
     method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
-    data?: any;
+    data?: Record<string, any>;
     headers?: Record<string, string>;
 }
 
