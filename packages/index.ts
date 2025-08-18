@@ -1,4 +1,5 @@
-import WebApp from 'telegram-web-app';
+import type { Telegram } from 'telegram-web-app';
+
 import {
     GameRecordResult,
     InviteOptions,
@@ -21,29 +22,29 @@ import {
     VerifyResult
 } from './core/types';
 
-declare global {
-    interface Window {
-        Telegram?: {
-            WebApp?: typeof WebApp;
-        };
-    }
-}
+// 直接静态 import
+import Social from './social/social';
+import Payment from './payment/payment';
+import Report from './report/report';
+import Game from './game/game';
+import Leaderboard from './leaderboard/leaderboard';
 
 /**
  * Portex SDK
  */
-export class Portex {
+export default class Portex {
     readonly #endpoint: string;
-    public webApp: WebApp;
+    public webApp: Telegram['WebApp'];
 
     #initResult: VerifyResult | null = null;
 
-    // 子模块实例缓存
-    private _social?: any;
-    private _payment?: any;
-    private _report?: any;
-    private _game?: any;
-    private _leaderboard?: any;
+    // 子模块实例
+    private _social?: Social;
+    private _payment?: Payment;
+    private _report?: Report;
+    private _game?: Game;
+    private _leaderboard?: Leaderboard;
+
 
     constructor(protected readonly config: SDKConfig = { environment: 'prod', appId: '' }) {
         this.#endpoint = (config.environment || 'prod') === 'dev'
@@ -56,45 +57,30 @@ export class Portex {
         this.webApp = window.Telegram.WebApp;
     }
 
-    /** =================== 动态 import 子模块 =================== */
+    /** ============== 懒加载 getter ============== */
 
-    private async getSocial(): Promise<any> {
-        if (!this._social) {
-            const { default: Social } = await import('./social/social');
-            this._social = new Social(this);
-        }
+    public get social(): Social {
+        if (!this._social) this._social = new Social(this);
         return this._social;
     }
 
-    private async getPayment(): Promise<any> {
-        if (!this._payment) {
-            const { default: Payment } = await import('./payment/payment');
-            this._payment = new Payment(this);
-        }
+    public get payment(): Payment {
+        if (!this._payment) this._payment = new Payment(this);
         return this._payment;
     }
 
-    private async getReport(): Promise<any> {
-        if (!this._report) {
-            const { default: Report } = await import('./report/report');
-            this._report = new Report(this);
-        }
+    public get report(): Report {
+        if (!this._report) this._report = new Report(this);
         return this._report;
     }
 
-    private async getGame(): Promise<any> {
-        if (!this._game) {
-            const { default: Game } = await import('./game/game');
-            this._game = new Game(this);
-        }
+    public get game(): Game {
+        if (!this._game) this._game = new Game(this);
         return this._game;
     }
 
-    private async getLeaderboard(): Promise<any> {
-        if (!this._leaderboard) {
-            const { default: Leaderboard } = await import('./leaderboard/leaderboard');
-            this._leaderboard = new Leaderboard(this);
-        }
+    public get leaderboard(): Leaderboard {
+        if (!this._leaderboard) this._leaderboard = new Leaderboard(this);
         return this._leaderboard;
     }
 
@@ -157,98 +143,87 @@ export class Portex {
 
     get isVerified(): boolean { return this.#initResult?.status === 'ok'; }
 
-    getStartParam(): string {
-        this.checkVerified();
-        return new URL(window.location.href).searchParams.get('tgWebAppStartParam') || '';
-    }
-
-
     private checkVerified() {
         if (!this.isVerified) throw new Error('User not verified');
     }
 
     /** =================== 对外 API =================== */
-
-    async invite(options: InviteOptions): Promise<InviteResult> {
+    public getStartParam(): string {
         this.checkVerified();
-        return (await this.getSocial()).invite(options);
+        return new URL(window.location.href).searchParams.get('tgWebAppStartParam') || '';
+    }
+    public async invite(options: InviteOptions): Promise<InviteResult> {
+        this.checkVerified();
+        return this.social.invite(options);
     }
 
-    async getInviteUrl(options: InviteOptions): Promise<InviteResult> {
+    public async getInviteUrl(options: InviteOptions): Promise<InviteResult> {
         this.checkVerified();
-        return (await this.getSocial()).getInviteUrl(options);
+        return this.social.getInviteUrl(options);
     }
 
-    async getInvitePayload(key: string): Promise<InvitePayloadResult> {
+    public async getInvitePayload(key: string): Promise<InvitePayloadResult> {
         this.checkVerified();
-        return (await this.getSocial()).getInvitePayload(key);
+        return this.social.getInvitePayload(key);
     }
 
-    async pay(options: PaymentOptions, callback?: (result: InvoiceClosedResult) => void): Promise<PaymentResult> {
+    public async pay(options: PaymentOptions, callback?: (result: InvoiceClosedResult) => void): Promise<PaymentResult> {
         this.checkVerified();
-        return (await this.getPayment()).pay(options, callback);
+        return this.payment.pay(options, callback);
     }
 
-    async queryOrder(orderId: number): Promise<OrderResult> {
+    public async queryOrder(orderId: number): Promise<OrderResult> {
         this.checkVerified();
-        return (await this.getPayment()).queryOrder(orderId);
+        return this.payment.queryOrder(orderId);
     }
 
-    async resumePayment(callback?: (result: InvoiceClosedResult) => void): Promise<PaymentResult | null> {
+    public async resumePayment(callback?: (result: InvoiceClosedResult) => void): Promise<PaymentResult | null> {
         this.checkVerified();
-        return (await this.getPayment()).resumePayment(callback);
+        return this.payment.resumePayment(callback);
     }
 
-    async hasPendingPayment(): Promise<boolean> {
+    public async hasPendingPayment(): Promise<boolean> {
         this.checkVerified();
-        return (await this.getPayment()).hasPendingPayment();
+        return this.payment.hasPendingPayment();
     }
 
-    async reportUserSet(data: object = {}): Promise<boolean> {
+    public async reportUserSet(data: object = {}): Promise<boolean> {
         this.checkVerified();
-        return (await this.getReport()).userSet(data);
+        return this.report.userSet(data);
     }
 
-    async reportTrack(eventName: string, data: object = {}): Promise<boolean> {
+    public async reportTrack(eventName: string, data: object = {}): Promise<boolean> {
         this.checkVerified();
-        return (await this.getReport()).track(eventName, data);
+        return this.report.track(eventName, data);
     }
 
-    async saveGameRecord(name: string, record: string): Promise<boolean> {
+    public async saveGameRecord(name: string, record: string): Promise<boolean> {
         this.checkVerified();
-        return (await this.getGame()).saveRecord(name, record);
+        return this.game.saveRecord(name, record);
     }
 
-    async getGameRecord(name: string): Promise<GameRecordResult> {
+    public async getGameRecord(name: string): Promise<GameRecordResult> {
         this.checkVerified();
-        return (await this.getGame()).getRecord(name);
+        return this.game.getRecord(name);
     }
 
-    async listGameRecordNames(): Promise<ListGameRecordNamesResult> {
+    public async listGameRecordNames(): Promise<ListGameRecordNamesResult> {
         this.checkVerified();
-        return (await this.getGame()).listRecordNames();
+        return this.game.listRecordNames();
     }
 
-    async getLeaderboardTopN(options: LeaderboardTopNOptions): Promise<LeaderboardTopNResult> {
+    public async getLeaderboardTopN(options: LeaderboardTopNOptions): Promise<LeaderboardTopNResult> {
         this.checkVerified();
-        return (await this.getLeaderboard()).getLeaderboardTopN(options);
+        return this.leaderboard.getLeaderboardTopN(options);
     }
 
-    async getLeaderboardRank(options: LeaderboardRankOptions): Promise<LeaderboardRankResult> {
+    public async getLeaderboardRank(options: LeaderboardRankOptions): Promise<LeaderboardRankResult> {
         this.checkVerified();
-        return (await this.getLeaderboard()).getLeaderboardRank(options);
+        return this.leaderboard.getLeaderboardRank(options);
     }
 
-    async updateUserLeaderboardScore(options: LeaderboardUpdateUserScoreOptions): Promise<void> {
+    public async updateUserLeaderboardScore(options: LeaderboardUpdateUserScoreOptions): Promise<void> {
         this.checkVerified();
-        return (await this.getLeaderboard()).updateUserLeaderboardScore(options);
+        return this.leaderboard.updateUserLeaderboardScore(options);
     }
 }
-
-// Export types
-export {
-    InviteOptions,
-    InvitePayloadResult,
-    InviteResult,
-    SDKConfig
-} from './core/types';
