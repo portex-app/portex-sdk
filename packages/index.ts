@@ -32,7 +32,7 @@ import Leaderboard from './leaderboard/leaderboard';
 /**
  * Portex SDK
  */
-export default class Portex {
+export class Portex {
     readonly #endpoint: string;
     public webApp: Telegram['WebApp'];
 
@@ -44,8 +44,6 @@ export default class Portex {
     private _report?: Report;
     private _game?: Game;
     private _leaderboard?: Leaderboard;
-
-
     constructor(protected readonly config: SDKConfig = { environment: 'prod', appId: '' }) {
         this.#endpoint = (config.environment || 'prod') === 'dev'
             ? 'https://dev.sdk.portex.cloud'
