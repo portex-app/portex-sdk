@@ -6,6 +6,5 @@ export default defineConfig({
 	outDir: 'dest',
 	format: ['esm', 'umd', 'iife'],
 	platform: 'browser',
-	fixedExtension: true,
-	minify: true, // Whether to minify the output
+	minify: false, // Whether to minify the output
 })

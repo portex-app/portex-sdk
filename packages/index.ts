@@ -1,5 +1,5 @@
 import type { Telegram } from 'telegram-web-app';
-
+import '../lib/telegram-web-app.js'
 import {
     GameRecordResult,
     InviteOptions,
